@@ -9,7 +9,7 @@ router.get('/login', (req, res) => {
   if (req.cookies?.admin_token) {
     try {
       const jwt = require('jsonwebtoken');
-      jwt.verify(req.cookies.admin_token, process.env.JWT_SECRET);
+      jwt.verify(req.cookies.admin_token, process.env.JWT_SECRET || 'brandora_secret_key_2024');
       return res.redirect('/admin/dashboard');
     } catch (e) { /* continue to login */ }
   }
