@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <a href="/admin/dashboard" class="sidebar-logo" style="display: flex; align-items: center; text-decoration: none; gap: 8px;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: #0F0F0F; border: 2px solid #F5A623; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(245, 166, 35, 0.3);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M22 7L13.5 15.5 8.5 10.5 2 17" stroke="#FFFFFF"/>
+             <path d="M16 7h6v6" stroke="#F5A623"/>
+          </svg>
+        </div>
+        <span style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 0.5px;">
+          <span style="color: #FFFFFF;">BRAND</span><span style="color: #F5A623;">ORA</span>
+        </span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose"><i data-lucide="x"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard" class="sidebar-link"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="/admin/bookings" class="sidebar-link"><i data-lucide="calendar"></i><span>Bookings</span></a>
+      <a href="/admin/customers" class="sidebar-link"><i data-lucide="users"></i><span>Customers</span></a>
+      <a href="/admin/services" class="sidebar-link"><i data-lucide="layers"></i><span>Services</span></a>
+      <a href="/admin/messages" class="sidebar-link"><i data-lucide="mail"></i><span>Messages</span></a>
+      <a href="/admin/content" class="sidebar-link active"><i data-lucide="file-text"></i><span>Content</span></a>
+      <div class="sidebar-divider"></div>
+      <a href="/" class="sidebar-link" target="_blank"><i data-lucide="external-link"></i><span>View Website</span></a>
+      <a href="/admin/logout" class="sidebar-link logout"><i data-lucide="log-out"></i><span>Logout</span></a>
+    </nav>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-header">
+      <button class="sidebar-toggle" id="sidebarToggle"><i data-lucide="menu"></i></button>
+      <h2 class="admin-page-title">Content Management</h2>
+      <div class="admin-header-right">
+        <span class="admin-welcome"><strong><%= admin.name %></strong></span>
+        <div class="admin-avatar"><%= admin.name.charAt(0).toUpperCase() %></div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <p class="admin-desc">Edit your website content below. Changes will reflect on the public website immediately.</p>
+
+      <% content.forEach(item => { %>
+        <div class="admin-card content-card" style="margin-bottom: 20px;">
+          <div class="admin-card-header">
+            <h3><%= item.section_key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %></h3>
+            <span class="text-muted">Key: <%= item.section_key %></span>
+          </div>
+          <div class="admin-card-body">
+            <form onsubmit="saveContent(event, '<%= item.section_key %>')">
+              <div class="form-group">
+                <label>Title</label>
+                <input type="text" name="title" value="<%= item.title || '' %>" class="admin-input">
+              </div>
+              <div class="form-group">
+                <label>Subtitle</label>
+                <input type="text" name="subtitle" value="<%= item.subtitle || '' %>" class="admin-input">
+              </div>
+              <div class="form-group">
+                <label>Body Content</label>
+                <textarea name="body" rows="4" class="admin-input"><%= item.body || '' %></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm">
+                <i data-lucide="save"></i> Save Changes
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+  <script>
+    async function saveContent(e, key) {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        title: form.title.value,
+        subtitle: form.subtitle.value,
+        body: form.body.value
+      };
+
+      try {
+        const res = await fetch('/admin/content/' + key, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast('Content updated successfully!', 'success');
+        }
+      } catch (err) {
+        showToast('Failed to update content', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

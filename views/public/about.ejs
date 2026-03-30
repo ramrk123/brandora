@@ -1,0 +1,164 @@
+<%- include('../layouts/main', { body: `
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <div class="page-header-content reveal-up">
+      <span class="section-badge">Know Us Better</span>
+      <h1 class="page-title">About Us</h1>
+      <p class="page-subtitle">Discover the passion, vision, and expertise behind BRANDORA</p>
+    </div>
+  </div>
+</section>
+
+<!-- About Intro -->
+<section class="section about-intro">
+  <div class="container">
+    <div class="about-intro-grid">
+      <div class="about-intro-content reveal-left">
+        <span class="section-badge">${intro ? intro.subtitle : 'Crafting Digital Excellence'}</span>
+        <h2 class="section-title">${intro ? intro.title : 'About BRANDORA'}</h2>
+        <p class="about-text">${intro ? intro.body : ''}</p>
+        <div class="about-highlights">
+          <div class="about-highlight">
+            <div class="highlight-icon"><i data-lucide="users"></i></div>
+            <div class="highlight-info">
+              <strong class="highlight-num" data-count="30">0+</strong>
+              <span>Happy Clients</span>
+            </div>
+          </div>
+          <div class="about-highlight">
+            <div class="highlight-icon"><i data-lucide="briefcase"></i></div>
+            <div class="highlight-info">
+              <strong class="highlight-num" data-count="50">0+</strong>
+              <span>Projects Done</span>
+            </div>
+          </div>
+          <div class="about-highlight">
+            <div class="highlight-icon"><i data-lucide="award"></i></div>
+            <div class="highlight-info">
+              <strong class="highlight-num" data-count="100">0%</strong>
+              <span>Satisfaction Rate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about-intro-visual reveal-right">
+        <div class="about-shape-container">
+          <div class="about-shape as-1"></div>
+          <div class="about-shape as-2"></div>
+          <div class="about-card-float">
+            <i data-lucide="sparkles"></i>
+            <span>Creative Excellence</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="section mission-vision">
+  <div class="container">
+    <div class="mv-grid">
+      <div class="mv-card reveal-up" style="--delay: 0s">
+        <div class="mv-icon"><i data-lucide="target"></i></div>
+        <h3>${mission ? mission.title : 'Our Mission'}</h3>
+        <p>${mission ? mission.body : ''}</p>
+      </div>
+      <div class="mv-card reveal-up" style="--delay: 0.15s">
+        <div class="mv-icon"><i data-lucide="eye"></i></div>
+        <h3>${vision ? vision.title : 'Our Vision'}</h3>
+        <p>${vision ? vision.body : ''}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Story -->
+<section class="section our-story">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-badge">Our Journey</span>
+      <h2 class="section-title">${story ? story.title : 'Our Story'}</h2>
+    </div>
+    <div class="story-content reveal-up">
+      <div class="story-timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h4>The Beginning</h4>
+            <p>${story ? story.body : ''}</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h4>Growth & Learning</h4>
+            <p>Through dedication and continuous learning, we expanded our service offerings from logo design to comprehensive digital solutions including UI/UX, web development, and theme design.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <h4>Where We Are Today</h4>
+            <p>Today, BRANDORA serves clients across diverse industries, delivering premium creative solutions that drive real business results. And we're just getting started.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Company Overview -->
+<section class="section company-overview">
+  <div class="container">
+    <div class="company-grid">
+      <div class="company-content reveal-left">
+        <span class="section-badge">Our Company</span>
+        <h2 class="section-title">${company ? company.title : 'BRANDORA'}</h2>
+        <p class="company-subtitle">${company ? company.subtitle : ''}</p>
+        <p>${company ? company.body : ''}</p>
+        <a href="/services" class="btn btn-primary">Explore Our Services <i data-lucide="arrow-right"></i></a>
+      </div>
+      <div class="company-features reveal-right">
+        <div class="company-feature">
+          <i data-lucide="palette"></i>
+          <h4>Creative Design</h4>
+          <p>Eye-catching visuals that tell your brand story</p>
+        </div>
+        <div class="company-feature">
+          <i data-lucide="code"></i>
+          <h4>Clean Code</h4>
+          <p>Well-structured, performant web solutions</p>
+        </div>
+        <div class="company-feature">
+          <i data-lucide="smartphone"></i>
+          <h4>Responsive</h4>
+          <p>Perfect on every device and screen size</p>
+        </div>
+        <div class="company-feature">
+          <i data-lucide="rocket"></i>
+          <h4>Fast & SEO</h4>
+          <p>Optimized for speed and search engines</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="container">
+    <div class="cta-content reveal-up">
+      <h2>Let's Build Something Amazing Together</h2>
+      <p>Ready to elevate your brand? We're here to make it happen.</p>
+      <div class="cta-actions">
+        <a href="/booking" class="btn btn-white btn-lg">Get Started <i data-lucide="arrow-right"></i></a>
+        <a href="/contact" class="btn btn-outline-white btn-lg">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+` }) %>

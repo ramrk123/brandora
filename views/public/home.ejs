@@ -1,0 +1,211 @@
+<%- include('../layouts/main', { body: `
+
+<!-- Hero Section -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-gradient"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-text reveal-up" style="grid-column: 1 / -1; text-align: center; max-width: 800px; margin: 0 auto;">
+      <span class="hero-badge">🚀 Creative Design Agency</span>
+      <h1 class="hero-title">${heroContent ? heroContent.title : 'We Design Your Digital Identity'}</h1>
+      <p class="hero-subtitle" style="margin-left: auto; margin-right: auto;">${heroContent ? heroContent.subtitle : 'From logos to full websites – we build your brand'}</p>
+      <div class="hero-actions" style="justify-content: center;">
+        <a href="/booking" class="btn btn-primary btn-lg" id="heroGetStarted">
+          Get Started
+          <i data-lucide="arrow-right"></i>
+        </a>
+        <a href="/services" class="btn btn-outline btn-lg" id="heroViewServices">
+          View Services
+          <i data-lucide="layers"></i>
+        </a>
+      </div>
+      <div class="hero-stats" style="justify-content: center;">
+        <div class="hero-stat">
+          <span class="hero-stat-num" data-count="50">0</span><span class="hero-stat-plus">+</span>
+          <span class="hero-stat-label">Projects Done</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num" data-count="30">0</span><span class="hero-stat-plus">+</span>
+          <span class="hero-stat-label">Happy Clients</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num" data-count="5">0</span><span class="hero-stat-plus">+</span>
+          <span class="hero-stat-label">Services</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <a href="#services-preview" class="scroll-indicator">
+      <span>Scroll to explore</span>
+      <i data-lucide="chevron-down"></i>
+    </a>
+  </div>
+</section>
+
+<!-- Services Preview -->
+<section class="section services-preview" id="services-preview">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-badge">What We Do</span>
+      <h2 class="section-title">Our Services</h2>
+      <p class="section-subtitle">We offer a full range of creative services to elevate your brand and digital presence</p>
+    </div>
+    <div class="services-grid">
+` +
+services.map((service, i) => `
+      <div class="service-card reveal-up" style="--delay: ${i * 0.1}s" id="serviceCard${service.id}">
+        <div class="service-card-icon">
+          <i data-lucide="${service.icon || 'palette'}"></i>
+        </div>
+        <h3 class="service-card-title">${service.name}</h3>
+        <p class="service-card-desc">${service.description.substring(0, 120)}...</p>
+        <a href="/booking?service=${service.slug}" class="service-card-link">
+          Book Now <i data-lucide="arrow-right"></i>
+        </a>
+      </div>
+`).join('') +
+`
+    </div>
+    <div class="section-cta reveal-up">
+      <a href="/services" class="btn btn-outline">View All Services <i data-lucide="arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="section why-us" id="whyChooseUs">
+  <div class="container">
+    <div class="why-us-grid">
+      <div class="why-us-content reveal-left">
+        <span class="section-badge">Why Choose Us</span>
+        <h2 class="section-title">Crafted With Passion, Delivered With Excellence</h2>
+        <p class="section-subtitle">We combine creativity with technology to deliver designs that don't just look beautiful — they perform.</p>
+        <div class="why-us-features">
+          <div class="why-feature">
+            <div class="why-feature-icon"><i data-lucide="shield-check"></i></div>
+            <div>
+              <h4>Premium Quality</h4>
+              <p>Every pixel is carefully crafted to ensure your brand looks world-class</p>
+            </div>
+          </div>
+          <div class="why-feature">
+            <div class="why-feature-icon"><i data-lucide="zap"></i></div>
+            <div>
+              <h4>Fast Delivery</h4>
+              <p>Quick turnaround times without compromising on quality</p>
+            </div>
+          </div>
+          <div class="why-feature">
+            <div class="why-feature-icon"><i data-lucide="headphones"></i></div>
+            <div>
+              <h4>24/7 Support</h4>
+              <p>Dedicated support throughout your project journey</p>
+            </div>
+          </div>
+          <div class="why-feature">
+            <div class="why-feature-icon"><i data-lucide="refresh-cw"></i></div>
+            <div>
+              <h4>Unlimited Revisions</h4>
+              <p>We iterate until you're 100% satisfied with the result</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="why-us-visual reveal-right">
+        <div class="why-us-card-stack">
+          <div class="floating-card fc-1">
+            <i data-lucide="trending-up"></i>
+            <span>100% Growth</span>
+          </div>
+          <div class="floating-card fc-2">
+            <i data-lucide="star"></i>
+            <span>5-Star Rated</span>
+          </div>
+          <div class="floating-card fc-3">
+            <i data-lucide="award"></i>
+            <span>Top Quality</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-badge">Testimonials</span>
+      <h2 class="section-title">What Our Clients Say</h2>
+      <p class="section-subtitle">Don't just take our word for it — hear from businesses we've helped transform</p>
+    </div>
+    <div class="testimonial-slider" id="testimonialSlider">
+      <div class="testimonial-track">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+          </div>
+          <p class="testimonial-text">"BRANDORA transformed our brand identity completely. The logo and website they designed exceeded our expectations. Highly professional team!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">AK</div>
+            <div>
+              <strong>Arun Kumar</strong>
+              <span>Restaurant Owner</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+          </div>
+          <p class="testimonial-text">"Outstanding UI/UX design work! They understood our vision perfectly and delivered a product that our users absolutely love. Best decision we made."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">PS</div>
+            <div>
+              <strong>Priya Sharma</strong>
+              <span>Startup Founder</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i>
+          </div>
+          <p class="testimonial-text">"The coffee shop theme they designed was perfect. Our online presence has grown significantly. Quick delivery and amazing customer service!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">MR</div>
+            <div>
+              <strong>Mohammed Rafi</strong>
+              <span>Café Owner</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-nav">
+        <button class="testimonial-btn prev" id="testimonialPrev"><i data-lucide="chevron-left"></i></button>
+        <div class="testimonial-dots" id="testimonialDots"></div>
+        <button class="testimonial-btn next" id="testimonialNext"><i data-lucide="chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-banner" id="ctaBanner">
+  <div class="container">
+    <div class="cta-content reveal-up">
+      <h2>Ready to Transform Your Brand?</h2>
+      <p>Let's create something amazing together. Get a free consultation today.</p>
+      <div class="cta-actions">
+        <a href="/booking" class="btn btn-white btn-lg">Start Your Project <i data-lucide="arrow-right"></i></a>
+        <a href="https://wa.me/916381185917" target="_blank" class="btn btn-outline-white btn-lg">
+          <i data-lucide="message-circle"></i> WhatsApp Us
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+` }) %>

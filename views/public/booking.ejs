@@ -1,0 +1,132 @@
+<%- include('../layouts/main', { body: `
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <div class="page-header-content reveal-up">
+      <span class="section-badge">Get Started</span>
+      <h1 class="page-title">Book a Service</h1>
+      <p class="page-subtitle">Fill in the details below and we'll get back to you within 24 hours</p>
+    </div>
+  </div>
+</section>
+
+<!-- Booking Form -->
+<section class="section booking-section">
+  <div class="container">
+    <div class="booking-grid">
+      <div class="booking-form-wrapper reveal-left">
+        <form class="booking-form" id="bookingForm">
+          <div class="form-group">
+            <label for="bookingName">Full Name <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i data-lucide="user"></i>
+              <input type="text" id="bookingName" name="name" placeholder="Enter your full name" required>
+            </div>
+            <span class="form-error" id="nameError"></span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookingDistrict">District <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <i data-lucide="map-pin"></i>
+                <input type="text" id="bookingDistrict" name="district" placeholder="Your district" required>
+              </div>
+              <span class="form-error" id="districtError"></span>
+            </div>
+            <div class="form-group">
+              <label for="bookingContact">Contact Number <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <i data-lucide="phone"></i>
+                <input type="tel" id="bookingContact" name="contact_number" placeholder="+91 XXXXX XXXXX" required>
+              </div>
+              <span class="form-error" id="contactError"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bookingEmail">Email ID <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i data-lucide="mail"></i>
+              <input type="email" id="bookingEmail" name="email" placeholder="your@email.com" required>
+            </div>
+            <span class="form-error" id="emailError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="bookingService">Select Service <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i data-lucide="layers"></i>
+              <select id="bookingService" name="service_id" required>
+                <option value="">Choose a service...</option>
+` +
+services.map(s => `                <option value="${s.id}" ${preselected === s.name ? 'selected' : ''}>${s.name}</option>`).join('\n') +
+`
+              </select>
+            </div>
+            <span class="form-error" id="serviceError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="bookingMessage">Message <span class="optional">(Optional)</span></label>
+            <div class="input-wrapper textarea-wrapper">
+              <i data-lucide="message-square"></i>
+              <textarea id="bookingMessage" name="message" placeholder="Tell us about your project..." rows="4"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-full" id="bookingSubmit">
+            <span>Submit Booking</span>
+            <i data-lucide="send"></i>
+          </button>
+        </form>
+      </div>
+
+      <div class="booking-info reveal-right">
+        <div class="booking-info-card">
+          <h3>Why Book With Us?</h3>
+          <ul class="booking-benefits">
+            <li><i data-lucide="check-circle"></i> Free initial consultation</li>
+            <li><i data-lucide="check-circle"></i> Response within 24 hours</li>
+            <li><i data-lucide="check-circle"></i> No commitment required</li>
+            <li><i data-lucide="check-circle"></i> Competitive pricing</li>
+            <li><i data-lucide="check-circle"></i> 100% satisfaction guarantee</li>
+          </ul>
+        </div>
+        <div class="booking-info-card">
+          <h3>Quick Contact</h3>
+          <div class="quick-contact">
+            <a href="tel:+916381185917" class="quick-contact-item">
+              <i data-lucide="phone"></i>
+              <span>+91 6381185917</span>
+            </a>
+            <a href="mailto:ramcreationof@gmail.com" class="quick-contact-item">
+              <i data-lucide="mail"></i>
+              <span>ramcreationof@gmail.com</span>
+            </a>
+            <a href="https://wa.me/916381185917" target="_blank" class="quick-contact-item whatsapp">
+              <i data-lucide="message-circle"></i>
+              <span>WhatsApp Us</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-icon success">
+      <i data-lucide="check-circle"></i>
+    </div>
+    <h3>Booking Submitted!</h3>
+    <p id="successMessage">Your booking has been submitted successfully. We'll contact you soon!</p>
+    <button class="btn btn-primary" onclick="document.getElementById('successModal').classList.remove('active')">Got It!</button>
+  </div>
+</div>
+
+` }) %>
+<script src="/js/booking.js"></script>

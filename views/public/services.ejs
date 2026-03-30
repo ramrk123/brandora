@@ -1,0 +1,97 @@
+<%- include('../layouts/main', { body: `
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <div class="page-header-content reveal-up">
+      <span class="section-badge">What We Offer</span>
+      <h1 class="page-title">Our Services</h1>
+      <p class="page-subtitle">Comprehensive creative solutions tailored to elevate your brand and digital presence</p>
+    </div>
+  </div>
+</section>
+
+<!-- Services List -->
+<section class="section services-full">
+  <div class="container">
+` +
+services.map((service, i) => `
+    <div class="service-detail ${i % 2 !== 0 ? 'reverse' : ''} reveal-up" id="service-${service.slug}">
+      <div class="service-detail-content">
+        <div class="service-detail-icon">
+          <i data-lucide="${service.icon || 'palette'}"></i>
+        </div>
+        <h2 class="service-detail-title">${service.name}</h2>
+        <p class="service-detail-desc">${service.description}</p>
+        <div class="service-detail-benefits">
+          <h4>What You Get:</h4>
+          <ul>
+            ${service.benefits.split('|').map(b => '<li><i data-lucide="check-circle"></i> ' + b.trim() + '</li>').join('')}
+          </ul>
+        </div>
+        <div class="service-detail-footer">
+          <span class="service-price">${service.price_display}</span>
+          <a href="/booking?service=${service.slug}" class="btn btn-primary">
+            Book Now <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="service-detail-visual">
+        <div class="service-visual-shape sv-${i + 1}"></div>
+      </div>
+    </div>
+`).join('') +
+`
+  </div>
+</section>
+
+<!-- Process Section -->
+<section class="section process-section">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-badge">How We Work</span>
+      <h2 class="section-title">Our Process</h2>
+      <p class="section-subtitle">A streamlined approach to delivering exceptional results</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step reveal-up" style="--delay: 0s">
+        <div class="process-num">01</div>
+        <h3>Discovery</h3>
+        <p>We learn about your business, goals, and vision to understand what you need.</p>
+      </div>
+      <div class="process-step reveal-up" style="--delay: 0.1s">
+        <div class="process-num">02</div>
+        <h3>Design</h3>
+        <p>Our team creates concepts and mockups tailored to your brand identity.</p>
+      </div>
+      <div class="process-step reveal-up" style="--delay: 0.2s">
+        <div class="process-num">03</div>
+        <h3>Develop</h3>
+        <p>We bring the designs to life with clean code and modern technologies.</p>
+      </div>
+      <div class="process-step reveal-up" style="--delay: 0.3s">
+        <div class="process-num">04</div>
+        <h3>Deliver</h3>
+        <p>Final review, revisions, and launch — your project goes live!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="container">
+    <div class="cta-content reveal-up">
+      <h2>Have a Project in Mind?</h2>
+      <p>Let's discuss how we can help bring your vision to life.</p>
+      <div class="cta-actions">
+        <a href="/booking" class="btn btn-white btn-lg">Book a Service <i data-lucide="arrow-right"></i></a>
+        <a href="https://wa.me/916381185917" target="_blank" class="btn btn-outline-white btn-lg">
+          <i data-lucide="message-circle"></i> Chat on WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+` }) %>

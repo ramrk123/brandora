@@ -1,0 +1,195 @@
+/* =============================================
+   ANIMATIONS & MICRO-INTERACTIONS
+   ============================================= */
+
+/* --- Scroll Reveal Animations --- */
+.reveal-up,
+.reveal-left,
+.reveal-right {
+  opacity: 0;
+  transition: all 0.8s var(--ease);
+}
+
+.reveal-up { transform: translateY(40px); }
+.reveal-left { transform: translateX(-40px); }
+.reveal-right { transform: translateX(40px); }
+
+.reveal-up.revealed { opacity: 1; transform: translateY(0); }
+.reveal-left.revealed { opacity: 1; transform: translateX(0); }
+.reveal-right.revealed { opacity: 1; transform: translateX(0); }
+
+/* Staggered children */
+.reveal-up[style*="--delay"] { transition-delay: var(--delay); }
+
+/* --- Button Ripple Effect --- */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  transform: scale(0);
+  opacity: 0;
+  transition: all 0.5s var(--ease);
+  border-radius: inherit;
+}
+
+.btn:active::after {
+  transform: scale(2);
+  opacity: 1;
+  transition: 0s;
+}
+
+/* --- Card Hover Glow --- */
+.service-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--gradient-primary);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  filter: blur(20px);
+}
+
+.service-card:hover::after {
+  opacity: 0.15;
+}
+
+/* --- Header transition --- */
+.site-header {
+  transition: all 0.4s var(--ease);
+}
+
+/* --- Smooth Link Underline --- */
+.nav-link::after {
+  content: '';
+  display: block;
+  height: 2px;
+  width: 0;
+  background: var(--gradient-primary);
+  transition: width 0.3s var(--ease);
+  margin-top: 2px;
+  border-radius: 2px;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* --- Input Focus Animation --- */
+.input-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  transition: all 0.4s var(--ease);
+  border-radius: 2px;
+  transform: translateX(-50%);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper:focus-within::after {
+  width: 100%;
+}
+
+/* --- Counter Animation (CSS fallback) --- */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Gradient Border Animation --- */
+@keyframes gradient-rotate {
+  from { --angle: 0deg; }
+  to { --angle: 360deg; }
+}
+
+/* --- Page Load Animation --- */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  animation: page-enter 0.6s var(--ease) forwards;
+}
+
+/* --- Skeleton Loading --- */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--dark-surface) 25%, rgba(255,255,255,0.06) 37%, var(--dark-surface) 63%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* --- Floating animation for misc elements --- */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* --- Status Badge Pulse --- */
+.status-badge {
+  position: relative;
+}
+
+.status-pending::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--warning);
+  transform: translateY(-50%);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+}
+
+/* --- Smooth scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* --- Selection color --- */
+::selection {
+  background: rgba(11,61,145,0.4);
+  color: var(--white);
+}

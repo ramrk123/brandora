@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <a href="/admin/dashboard" class="sidebar-logo" style="display: flex; align-items: center; text-decoration: none; gap: 8px;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: #0F0F0F; border: 2px solid #F5A623; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(245, 166, 35, 0.3);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M22 7L13.5 15.5 8.5 10.5 2 17" stroke="#FFFFFF"/>
+             <path d="M16 7h6v6" stroke="#F5A623"/>
+          </svg>
+        </div>
+        <span style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 0.5px;">
+          <span style="color: #FFFFFF;">BRAND</span><span style="color: #F5A623;">ORA</span>
+        </span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose"><i data-lucide="x"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard" class="sidebar-link <%= currentPage === 'dashboard' ? 'active' : '' %>">
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+      </a>
+      <a href="/admin/bookings" class="sidebar-link <%= currentPage === 'bookings' ? 'active' : '' %>">
+        <i data-lucide="calendar"></i> <span>Bookings</span>
+      </a>
+      <a href="/admin/customers" class="sidebar-link <%= currentPage === 'customers' ? 'active' : '' %>">
+        <i data-lucide="users"></i> <span>Customers</span>
+      </a>
+      <a href="/admin/services" class="sidebar-link <%= currentPage === 'services' ? 'active' : '' %>">
+        <i data-lucide="layers"></i> <span>Services</span>
+      </a>
+      <a href="/admin/messages" class="sidebar-link <%= currentPage === 'messages' ? 'active' : '' %>">
+        <i data-lucide="mail"></i> <span>Messages</span>
+      </a>
+      <a href="/admin/content" class="sidebar-link <%= currentPage === 'content' ? 'active' : '' %>">
+        <i data-lucide="file-text"></i> <span>Content</span>
+      </a>
+      <div class="sidebar-divider"></div>
+      <a href="/" class="sidebar-link" target="_blank">
+        <i data-lucide="external-link"></i> <span>View Website</span>
+      </a>
+      <a href="/admin/logout" class="sidebar-link logout">
+        <i data-lucide="log-out"></i> <span>Logout</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <button class="sidebar-toggle" id="sidebarToggle"><i data-lucide="menu"></i></button>
+      <div class="admin-header-right">
+        <span class="admin-welcome">Welcome, <strong><%= admin.name %></strong></span>
+        <div class="admin-avatar"><%= admin.name ? admin.name.charAt(0).toUpperCase() : 'A' %></div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i data-lucide="calendar"></i></div>
+          <div class="stat-info">
+            <span class="stat-num"><%= stats.totalBookings %></span>
+            <span class="stat-label">Total Bookings</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow"><i data-lucide="clock"></i></div>
+          <div class="stat-info">
+            <span class="stat-num"><%= stats.pendingBookings %></span>
+            <span class="stat-label">Pending</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i data-lucide="loader"></i></div>
+          <div class="stat-info">
+            <span class="stat-num"><%= stats.inProgressBookings %></span>
+            <span class="stat-label">In Progress</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i data-lucide="check-circle"></i></div>
+          <div class="stat-info">
+            <span class="stat-num"><%= stats.completedBookings %></span>
+            <span class="stat-label">Completed</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i data-lucide="mail"></i></div>
+          <div class="stat-info">
+            <span class="stat-num"><%= stats.totalContacts %></span>
+            <span class="stat-label">Messages (<%= stats.unreadContacts %> new)</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon teal"><i data-lucide="layers"></i></div>
+          <div class="stat-info">
+            <span class="stat-num"><%= stats.totalServices %></span>
+            <span class="stat-label">Active Services</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Recent Bookings -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3><i data-lucide="calendar"></i> Recent Bookings</h3>
+            <a href="/admin/bookings" class="admin-card-link">View All</a>
+          </div>
+          <div class="admin-card-body">
+            <% if (recentBookings.length === 0) { %>
+              <div class="empty-state">
+                <i data-lucide="inbox"></i>
+                <p>No bookings yet</p>
+              </div>
+            <% } else { %>
+              <div class="table-responsive">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Service</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% recentBookings.forEach(b => { %>
+                      <tr>
+                        <td><strong><%= b.name %></strong></td>
+                        <td><%= b.service_name %></td>
+                        <td><span class="status-badge status-<%= b.status.toLowerCase().replace(' ', '-') %>"><%= b.status %></span></td>
+                        <td class="text-muted"><%= new Date(b.created_at).toLocaleDateString() %></td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Service Popularity -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h3><i data-lucide="bar-chart-3"></i> Service Popularity</h3>
+          </div>
+          <div class="admin-card-body">
+            <% if (serviceStats.length === 0) { %>
+              <div class="empty-state">
+                <i data-lucide="bar-chart-3"></i>
+                <p>No data yet</p>
+              </div>
+            <% } else { %>
+              <div class="chart-bars">
+                <% const maxCount = Math.max(...serviceStats.map(s => s.count)); %>
+                <% serviceStats.forEach(s => { %>
+                  <div class="chart-bar-item">
+                    <div class="chart-bar-label">
+                      <span><%= s.service_name %></span>
+                      <span class="chart-bar-count"><%= s.count %></span>
+                    </div>
+                    <div class="chart-bar-track">
+                      <div class="chart-bar-fill" style="width: <%= (s.count / maxCount * 100) %>%"></div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Messages -->
+      <div class="admin-card" style="margin-top: 24px;">
+        <div class="admin-card-header">
+          <h3><i data-lucide="mail"></i> Recent Messages</h3>
+          <a href="/admin/messages" class="admin-card-link">View All</a>
+        </div>
+        <div class="admin-card-body">
+          <% if (recentContacts.length === 0) { %>
+            <div class="empty-state">
+              <i data-lucide="inbox"></i>
+              <p>No messages yet</p>
+            </div>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% recentContacts.forEach(c => { %>
+                    <tr>
+                      <td><strong><%= c.name %></strong></td>
+                      <td><%= c.email %></td>
+                      <td><%= c.subject || '-' %></td>
+                      <td class="text-muted"><%= new Date(c.created_at).toLocaleDateString() %></td>
+                      <td><span class="status-badge <%= c.is_read ? 'status-completed' : 'status-pending' %>"><%= c.is_read ? 'Read' : 'New' %></span></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

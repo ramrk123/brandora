@@ -1,0 +1,144 @@
+<%- include('../layouts/main', { body: `
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <div class="page-header-content reveal-up">
+      <span class="section-badge">Get In Touch</span>
+      <h1 class="page-title">Contact Us</h1>
+      <p class="page-subtitle">Have a question or ready to start? We'd love to hear from you</p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section contact-section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal-left">
+        <h2>Let's Start a Conversation</h2>
+        <p>Whether you have a project in mind or just want to explore possibilities, we're here to help.</p>
+        
+        <div class="contact-methods">
+          <div class="contact-method">
+            <div class="contact-method-icon">
+              <i data-lucide="mail"></i>
+            </div>
+            <div>
+              <h4>Email Us</h4>
+              <a href="mailto:ramcreationof@gmail.com">ramcreationof@gmail.com</a>
+            </div>
+          </div>
+          <div class="contact-method">
+            <div class="contact-method-icon">
+              <i data-lucide="phone"></i>
+            </div>
+            <div>
+              <h4>Call Us</h4>
+              <a href="tel:+916381185917">+91 6381185917</a>
+            </div>
+          </div>
+          <div class="contact-method">
+            <div class="contact-method-icon whatsapp-icon">
+              <i data-lucide="message-circle"></i>
+            </div>
+            <div>
+              <h4>WhatsApp</h4>
+              <a href="https://wa.me/916381185917" target="_blank">Chat with us instantly</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-hours">
+          <h4><i data-lucide="clock"></i> Business Hours</h4>
+          <p>Monday - Saturday: 9:00 AM - 7:00 PM</p>
+          <p>Sunday: Closed</p>
+        </div>
+      </div>
+
+      <div class="contact-form-wrapper reveal-right">
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <label for="contactName">Full Name <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i data-lucide="user"></i>
+              <input type="text" id="contactName" name="name" placeholder="Your name" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">Email <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i data-lucide="mail"></i>
+              <input type="email" id="contactEmail" name="email" placeholder="your@email.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactSubject">Subject</label>
+            <div class="input-wrapper">
+              <i data-lucide="edit-3"></i>
+              <input type="text" id="contactSubject" name="subject" placeholder="How can we help?">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contactMessage">Message <span class="required">*</span></label>
+            <div class="input-wrapper textarea-wrapper">
+              <i data-lucide="message-square"></i>
+              <textarea id="contactMessage" name="message" placeholder="Tell us about your project or questions..." rows="5" required></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg btn-full" id="contactSubmit">
+            <span>Send Message</span>
+            <i data-lucide="send"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="contactSuccessModal">
+  <div class="modal">
+    <div class="modal-icon success">
+      <i data-lucide="check-circle"></i>
+    </div>
+    <h3>Message Sent!</h3>
+    <p>Thank you for reaching out. We'll get back to you soon!</p>
+    <button class="btn btn-primary" onclick="document.getElementById('contactSuccessModal').classList.remove('active')">Got It!</button>
+  </div>
+</div>
+
+` }) %>
+<script>
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('contactSubmit');
+  btn.disabled = true;
+  btn.innerHTML = '<span>Sending...</span> <i data-lucide="loader" class="spin"></i>';
+  lucide.createIcons();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (result.success) {
+      document.getElementById('contactSuccessModal').classList.add('active');
+      e.target.reset();
+    } else {
+      alert(result.error || 'Something went wrong');
+    }
+  } catch (err) {
+    alert('Network error. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>Send Message</span> <i data-lucide="send"></i>';
+    lucide.createIcons();
+  }
+});
+</script>

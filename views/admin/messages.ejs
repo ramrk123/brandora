@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <a href="/admin/dashboard" class="sidebar-logo" style="display: flex; align-items: center; text-decoration: none; gap: 8px;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: #0F0F0F; border: 2px solid #F5A623; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(245, 166, 35, 0.3);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M22 7L13.5 15.5 8.5 10.5 2 17" stroke="#FFFFFF"/>
+             <path d="M16 7h6v6" stroke="#F5A623"/>
+          </svg>
+        </div>
+        <span style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 0.5px;">
+          <span style="color: #FFFFFF;">BRAND</span><span style="color: #F5A623;">ORA</span>
+        </span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose"><i data-lucide="x"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard" class="sidebar-link"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="/admin/bookings" class="sidebar-link"><i data-lucide="calendar"></i><span>Bookings</span></a>
+      <a href="/admin/customers" class="sidebar-link"><i data-lucide="users"></i><span>Customers</span></a>
+      <a href="/admin/services" class="sidebar-link"><i data-lucide="layers"></i><span>Services</span></a>
+      <a href="/admin/messages" class="sidebar-link active"><i data-lucide="mail"></i><span>Messages</span></a>
+      <a href="/admin/content" class="sidebar-link"><i data-lucide="file-text"></i><span>Content</span></a>
+      <div class="sidebar-divider"></div>
+      <a href="/" class="sidebar-link" target="_blank"><i data-lucide="external-link"></i><span>View Website</span></a>
+      <a href="/admin/logout" class="sidebar-link logout"><i data-lucide="log-out"></i><span>Logout</span></a>
+    </nav>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-header">
+      <button class="sidebar-toggle" id="sidebarToggle"><i data-lucide="menu"></i></button>
+      <h2 class="admin-page-title">Messages</h2>
+      <div class="admin-header-right">
+        <span class="admin-welcome"><strong><%= admin.name %></strong></span>
+        <div class="admin-avatar"><%= admin.name.charAt(0).toUpperCase() %></div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3>Contact Messages (<%= messages.length %>)</h3>
+        </div>
+        <div class="admin-card-body">
+          <% if (messages.length === 0) { %>
+            <div class="empty-state"><i data-lucide="mail"></i><p>No messages yet</p></div>
+          <% } else { %>
+            <div class="messages-list">
+              <% messages.forEach(m => { %>
+                <div class="message-item <%= m.is_read ? '' : 'unread' %>" id="msg-<%= m.id %>">
+                  <div class="message-header">
+                    <div class="message-author">
+                      <div class="message-avatar"><%= m.name.charAt(0).toUpperCase() %></div>
+                      <div>
+                        <strong><%= m.name %></strong>
+                        <span class="message-email"><%= m.email %></span>
+                      </div>
+                    </div>
+                    <div class="message-meta">
+                      <span class="message-date"><%= new Date(m.created_at).toLocaleDateString() %> <%= new Date(m.created_at).toLocaleTimeString() %></span>
+                      <% if (!m.is_read) { %><span class="badge-new">New</span><% } %>
+                    </div>
+                  </div>
+                  <% if (m.subject) { %><div class="message-subject"><%= m.subject %></div><% } %>
+                  <div class="message-body"><%= m.message %></div>
+                  <div class="message-actions">
+                    <a href="mailto:<%= m.email %>" class="btn btn-outline btn-sm"><i data-lucide="reply"></i> Reply via Email</a>
+                    <% if (!m.is_read) { %>
+                      <button class="btn btn-outline btn-sm" onclick="markRead(<%= m.id %>)"><i data-lucide="check"></i> Mark Read</button>
+                    <% } %>
+                    <button class="btn btn-outline btn-sm delete-btn" onclick="deleteMessage(<%= m.id %>)"><i data-lucide="trash-2"></i> Delete</button>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+  <script>
+    async function markRead(id) {
+      try {
+        await fetch('/admin/messages/' + id + '/read', { method: 'PUT' });
+        const el = document.getElementById('msg-' + id);
+        el.classList.remove('unread');
+        el.querySelector('.badge-new')?.remove();
+        showToast('Marked as read', 'success');
+      } catch (err) {
+        showToast('Failed to update', 'error');
+      }
+    }
+
+    async function deleteMessage(id) {
+      if (!confirm('Delete this message?')) return;
+      try {
+        await fetch('/admin/messages/' + id, { method: 'DELETE' });
+        document.getElementById('msg-' + id).remove();
+        showToast('Message deleted', 'success');
+      } catch (err) {
+        showToast('Failed to delete', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

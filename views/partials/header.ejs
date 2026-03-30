@@ -1,0 +1,31 @@
+<header class="site-header" id="siteHeader">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <a href="/" class="logo" id="headerLogo" style="display: flex; align-items: center; text-decoration: none; gap: 12px;">
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: #0F0F0F; border: 2px solid #F5A623; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M22 7L13.5 15.5 8.5 10.5 2 17" stroke="#FFFFFF"/>
+             <path d="M16 7h6v6" stroke="#F5A623"/>
+          </svg>
+        </div>
+        <span style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 900; letter-spacing: 0.5px;">
+          <span style="color: #FFFFFF;">BRAND</span><span style="color: #F5A623;">ORA</span>
+        </span>
+      </a>
+
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="main-nav" id="mainNav">
+        <ul class="nav-list">
+          <li><a href="/" class="nav-link <%= currentPage === 'home' ? 'active' : '' %>" id="navHome">Home</a></li>
+          <li><a href="/about" class="nav-link <%= currentPage === 'about' ? 'active' : '' %>" id="navAbout">About</a></li>
+          <li><a href="/services" class="nav-link <%= currentPage === 'services' ? 'active' : '' %>" id="navServices">Services</a></li>
+          <li><a href="/contact" class="nav-link <%= currentPage === 'contact' ? 'active' : '' %>" id="navContact">Contact</a></li>
+          <li><a href="/booking" class="btn btn-primary nav-cta" id="navBooking">Book Now</a></li>
+        </ul>
+      </nav>
+    </div>
+</header>
