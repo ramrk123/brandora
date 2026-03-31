@@ -71,6 +71,7 @@ router.get('/dashboard', (req, res) => {
   const totalContacts = db.prepare('SELECT COUNT(*) as c FROM contacts').get().c;
   const unreadContacts = db.prepare('SELECT COUNT(*) as c FROM contacts WHERE is_read = 0').get().c;
   const totalServices = db.prepare('SELECT COUNT(*) as c FROM services WHERE is_active = 1').get().c;
+  const servicesList = db.prepare('SELECT name FROM services WHERE is_active = 1 ORDER BY sort_order').all();
 
   const recentBookings = db.prepare(`
     SELECT * FROM bookings ORDER BY created_at DESC LIMIT 5
@@ -100,7 +101,8 @@ router.get('/dashboard', (req, res) => {
     recentBookings,
     recentContacts,
     serviceStats,
-    recentProjects
+    recentProjects,
+    servicesList
   });
 });
 

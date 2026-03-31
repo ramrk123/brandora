@@ -162,9 +162,9 @@
           <div class="admin-card-header">
             <h3><i data-lucide="image"></i> Recent Projects</h3>
             <div style="display: flex; gap: 10px;">
-              <a href="/admin/projects" class="btn btn-primary btn-sm" style="padding: 6px 12px; font-size: 13px;">
+              <button class="btn btn-primary btn-sm" onclick="document.getElementById('quickUploadModal').classList.add('active'); lucide.createIcons();" style="padding: 6px 12px; font-size: 13px;">
                 <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Project
-              </a>
+              </button>
               <a href="/admin/projects" class="admin-card-link">Manage All</a>
             </div>
           </div>
@@ -270,6 +270,38 @@
           <% } %>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Quick Upload Modal -->
+  <div class="modal-overlay" id="quickUploadModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Quick Upload Project</h3>
+        <button class="modal-close" onclick="document.getElementById('quickUploadModal').classList.remove('active')"><i data-lucide="x"></i></button>
+      </div>
+      <form action="/admin/projects" method="POST" enctype="multipart/form-data" style="padding: 20px;">
+        <div class="form-group">
+          <label>Project Title</label>
+          <input type="text" name="title" class="admin-input" required placeholder="e.g. Modern Tech Logo">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select name="service_name" class="admin-input" required style="background: #1A1A1A; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px;">
+            <% servicesList.forEach(s => { %>
+              <option value="<%= s.name %>" style="color: black;"><%= s.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Work Image</label>
+          <input type="file" name="image" accept="image/*" class="admin-input" required style="padding: 10px;">
+        </div>
+        <div class="modal-footer" style="padding-top: 20px;">
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('quickUploadModal').classList.remove('active')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Start Upload</button>
+        </div>
+      </form>
     </div>
   </div>
 
