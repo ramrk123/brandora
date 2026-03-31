@@ -158,6 +158,43 @@
           </div>
         </div>
 
+        <!-- Recent Projects -->
+        <div class="admin-card" style="margin-top: 24px;">
+          <div class="admin-card-header">
+            <h3><i data-lucide="image"></i> Recent Projects</h3>
+            <a href="/admin/projects" class="admin-card-link">Manage All</a>
+          </div>
+          <div class="admin-card-body">
+            <% if (recentProjects.length === 0) { %>
+              <div class="empty-state">
+                <i data-lucide="image"></i>
+                <p>No projects yet</p>
+              </div>
+            <% } else { %>
+              <div class="table-responsive">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Image</th>
+                      <th>Title</th>
+                      <th>Service</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% recentProjects.forEach(p => { %>
+                      <tr>
+                        <td><img src="<%= p.image_url %>" style="width: 40px; height: 30px; object-fit: cover; border-radius: 4px;"></td>
+                        <td><strong><%= p.title %></strong></td>
+                        <td><span class="badge"><%= p.service_name %></span></td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
         <!-- Service Popularity -->
         <div class="admin-card">
           <div class="admin-card-header">

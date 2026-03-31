@@ -88,6 +88,10 @@ router.get('/dashboard', (req, res) => {
     ORDER BY count DESC
   `).all();
 
+  const recentProjects = db.prepare(`
+    SELECT * FROM projects ORDER BY created_at DESC LIMIT 5
+  `).all();
+
   res.render('admin/dashboard', {
     title: 'Dashboard - Admin',
     currentPage: 'dashboard',
@@ -95,7 +99,8 @@ router.get('/dashboard', (req, res) => {
     stats: { totalBookings, pendingBookings, inProgressBookings, completedBookings, totalContacts, unreadContacts, totalServices },
     recentBookings,
     recentContacts,
-    serviceStats
+    serviceStats,
+    recentProjects
   });
 });
 

@@ -82,23 +82,23 @@ services.map((service, i) => `
           <h2 class="section-title">Recent Projects</h2>
           <p class="section-subtitle">Explore a showcase of our latest creative endeavors and successful digital transformations.</p>
         </div>
-        \` + (typeof projects !== 'undefined' && projects && projects.length > 0 ? \`
+        ` + (typeof projects !== 'undefined' && projects && projects.length > 0 ? `
           <div class="portfolio-grid">
-            \` + projects.map(p => \`
+            ` + projects.map(p => `
               <div class="portfolio-item">
                 <div class="portfolio-img">
-                  <img src="\${p.image_url}" alt="\${p.title}">
+                  <img src="${p.image_url}" alt="${p.title}">
                   <div class="portfolio-overlay">
-                    <span class="portfolio-category">\${p.service_name}</span>
-                    <h3 class="portfolio-title">\${p.title}</h3>
+                    <span class="portfolio-category">${p.service_name}</span>
+                    <h3 class="portfolio-title">${p.title}</h3>
                   </div>
                 </div>
               </div>
-            \`).join('') + \`
+            `).join('') + `
           </div>
-        \` : \`
+        ` : `
           <div style="text-align:center; padding: 40px; color:#555;">Portfolio empty. Ask admin to upload projects.</div>
-        \`) + \`
+        `) + `
       </div>
     </section>
     
