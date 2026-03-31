@@ -14,49 +14,201 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #0F0F0F; color: #E0E0E0; overflow: hidden; }
-    
-    .login-wrapper { display: flex; width: 100vw; height: 100vh; }
-    .login-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
-    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: #0F0F0F;
+      color: #E0E0E0;
+      overflow: hidden;
+    }
+
+    .login-wrapper {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .login-side {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
     .login-side.visual {
       background: linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 100%);
       border-right: 1px solid rgba(255, 255, 255, 0.05);
       position: relative;
     }
-    
-    .visual-content { max-width: 480px; text-align: left; position: relative; z-index: 2; }
-    .login-brand-logo { height: 60px; margin-bottom: 32px; }
-    .visual-content h1 { font-family: 'Outfit', sans-serif; font-size: 48px; font-weight: 800; color: #FFF; line-height: 1.1; margin-bottom: 24px; }
-    .visual-content p { font-size: 18px; color: #9E9E9E; line-height: 1.6; margin-bottom: 40px; }
-    
-    .login-stats { display: flex; gap: 48px; }
-    .login-stat span { display: block; font-size: 32px; font-weight: 700; color: #F5A623; margin-bottom: 4px; }
-    .login-stat p { font-size: 14px; color: #757575; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .login-side.form-side { background: #0F0F0F; }
-    .login-card { width: 100%; max-width: 400px; }
-    .login-header { margin-bottom: 40px; }
-    .login-header h2 { font-size: 32px; font-weight: 700; color: #FFF; margin-bottom: 8px; }
-    .login-header p { color: #757575; font-size: 15px; }
-    
-    .form-group { margin-bottom: 24px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #9E9E9E; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    .input-with-icon { position: relative; display: flex; align-items: center; background: #1A1A1A; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; transition: all 0.3s; }
-    .input-with-icon:focus-within { border-color: #F5A623; box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.1); }
-    .input-with-icon i { position: absolute; left: 16px; color: #424242; width: 20px; height: 20px; }
-    .input-with-icon input { width: 100%; background: none; border: none; padding: 16px 16px 16px 52px; color: #FFF; font-size: 15px; outline: none; }
-    
-    .btn-block { width: 100%; justify-content: center; padding: 16px; font-size: 16px; margin-top: 16px; cursor: pointer; border: none; border-radius: 12px; font-weight: 700; transition: all 0.3s; }
-    .btn-primary { background: #F5A623; color: #000; }
-    .btn-primary:hover { background: #E68A00; transform: translateY(-2px); }
-    
-    .login-footer { margin-top: 40px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 24px; }
-    .login-footer p { font-size: 13px; color: #424242; }
-    
-    @media (max-width: 992px) { .login-side.visual { display: none; } }
+
+    .visual-content {
+      max-width: 480px;
+      text-align: left;
+      position: relative;
+      z-index: 2;
+    }
+
+    .login-brand-logo {
+      height: 60px;
+      margin-bottom: 32px;
+    }
+
+    .visual-content h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      color: #FFF;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    .visual-content p {
+      font-size: 18px;
+      color: #9E9E9E;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .login-stats {
+      display: flex;
+      gap: 48px;
+    }
+
+    .login-stat span {
+      display: block;
+      font-size: 32px;
+      font-weight: 700;
+      color: #F5A623;
+      margin-bottom: 4px;
+    }
+
+    .login-stat p {
+      font-size: 14px;
+      color: #757575;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .login-side.form-side {
+      background: #0F0F0F;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-header {
+      margin-bottom: 40px;
+    }
+
+    .login-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #FFF;
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      color: #757575;
+      font-size: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #9E9E9E;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-with-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #1A1A1A;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    .input-with-icon:focus-within {
+      border-color: #F5A623;
+      box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.1);
+    }
+
+    .input-with-icon i {
+      position: absolute;
+      left: 16px;
+      color: #424242;
+      width: 20px;
+      height: 20px;
+    }
+
+    .input-with-icon input {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 16px 16px 16px 52px;
+      color: #FFF;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+      padding: 16px;
+      font-size: 16px;
+      margin-top: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #F5A623;
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #E68A00;
+      transform: translateY(-2px);
+    }
+
+    .login-footer {
+      margin-top: 40px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 24px;
+    }
+
+    .login-footer p {
+      font-size: 13px;
+      color: #424242;
+    }
+
+    @media (max-width: 992px) {
+      .login-side.visual {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -67,10 +219,12 @@
       <div class="login-side visual">
         <div class="visual-content">
           <div class="login-brand-logo" style="display: flex; align-items: center; margin-bottom: 32px; gap: 14px;">
-            <div style="width: 58px; height: 58px; border-radius: 50%; background: #0F0F0F; border: 2.5px solid #F5A623; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(245, 166, 35, 0.4);">
-              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                 <path d="M22 7L13.5 15.5 8.5 10.5 2 17" stroke="#FFFFFF"/>
-                 <path d="M16 7h6v6" stroke="#F5A623"/>
+            <div
+              style="width: 58px; height: 58px; border-radius: 50%; background: #0F0F0F; border: 2.5px solid #F5A623; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(245, 166, 35, 0.4);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 7L13.5 15.5 8.5 10.5 2 17" stroke="#FFFFFF" />
+                <path d="M16 7h6v6" stroke="#F5A623" />
               </svg>
             </div>
             <span style="font-family: 'Outfit', sans-serif; font-size: 34px; font-weight: 900; letter-spacing: 0.5px;">
@@ -97,36 +251,38 @@
             <h2>Welcome Back</h2>
             <p>Please sign in to your dashboard</p>
           </div>
-          <% if (typeof error !== 'undefined' && error) { %>
-            <div class="login-error" style="background: rgba(213, 0, 0, 0.1); color: #D50000; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+          <% if (typeof error !=='undefined' && error) { %>
+            <div class="login-error"
+              style="background: rgba(213, 0, 0, 0.1); color: #D50000; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
               <%= error %>
             </div>
-          <% } %>
-          <form class="login-form" method="POST" action="/admin/login">
-            <div class="form-group">
-              <label for="email">Email Address</label>
-              <div class="input-with-icon">
-                <i data-lucide="mail"></i>
-                <input type="email" id="email" name="email" required placeholder="admin@brandora.com">
+            <% } %>
+              <form class="login-form" method="POST" action="/admin/login">
+                <div class="form-group">
+                  <label for="email">Email Address</label>
+                  <div class="input-with-icon">
+                    <i data-lucide="mail"></i>
+                    <input type="email" id="email" name="email" required placeholder="admin@brandora.com">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <div class="input-with-icon">
+                    <i data-lucide="lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+                  Sign In <i data-lucide="log-in"></i>
+                </button>
+              </form>
+              <div class="login-footer">
+                <p>© 2026 BRANDORA Agency. All rights reserved.</p>
               </div>
-            </div>
-            <div class="form-group">
-              <label for="password">Password</label>
-              <div class="input-with-icon">
-                <i data-lucide="lock"></i>
-                <input type="password" id="password" name="password" required placeholder="••••••••">
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
-              Sign In <i data-lucide="log-in"></i>
-            </button>
-          </form>
-          <div class="login-footer">
-            <p>© 2026 BRANDORA Agency. All rights reserved.</p>
-          </div>
         </div>
       </div>
-    </div> <script>lucide.createIcons();</script>
+    </div>
+    <script>lucide.createIcons();</script>
 </body>
 
 </html>
