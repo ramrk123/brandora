@@ -8,7 +8,7 @@ function authenticateAdmin(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'brandora_secret_key_2024');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'branddigix_secret_key_2024');
     req.admin = decoded;
     next();
   } catch (err) {
@@ -20,7 +20,7 @@ function authenticateAdmin(req, res, next) {
 function generateToken(admin) {
   return jwt.sign(
     { id: admin.id, email: admin.email, name: admin.name },
-    process.env.JWT_SECRET || 'brandora_secret_key_2024',
+    process.env.JWT_SECRET || 'branddigix_secret_key_2024',
     { expiresIn: '24h' }
   );
 }

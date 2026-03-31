@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   const whyChoose = db.prepare("SELECT * FROM content WHERE section_key = 'why_choose_us'").get();
   
   res.render('public/home', {
-    title: 'BRANDORA - We Design Your Digital Identity',
+    title: 'BRANDDIGIX - We Design Your Digital Identity',
     currentPage: 'home',
     services,
     heroContent,
@@ -27,7 +27,7 @@ router.get('/about', (req, res) => {
   const company = db.prepare("SELECT * FROM content WHERE section_key = 'company_overview'").get();
 
   res.render('public/about', {
-    title: 'About Us - BRANDORA',
+    title: 'About Us - BRANDDIGIX',
     currentPage: 'about',
     intro, mission, vision, story, whyChoose, company
   });
@@ -38,7 +38,7 @@ router.get('/services', (req, res) => {
   const services = db.prepare('SELECT * FROM services WHERE is_active = 1 ORDER BY sort_order').all();
   
   res.render('public/services', {
-    title: 'Our Services - BRANDORA',
+    title: 'Our Services - BRANDDIGIX',
     currentPage: 'services',
     services
   });
@@ -50,7 +50,7 @@ router.get('/booking', (req, res) => {
   const preselected = req.query.service || '';
   
   res.render('public/booking', {
-    title: 'Book a Service - BRANDORA',
+    title: 'Book a Service - BRANDDIGIX',
     currentPage: 'booking',
     services,
     preselected
@@ -60,7 +60,7 @@ router.get('/booking', (req, res) => {
 // Contact page
 router.get('/contact', (req, res) => {
   res.render('public/contact', {
-    title: 'Contact Us - BRANDORA',
+    title: 'Contact Us - BRANDDIGIX',
     currentPage: 'contact'
   });
 });
