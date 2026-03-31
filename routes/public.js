@@ -8,8 +8,11 @@ router.get('/', (req, res) => {
   const heroContent = db.prepare("SELECT * FROM content WHERE section_key = 'hero_heading'").get();
   const whyChoose = db.prepare("SELECT * FROM content WHERE section_key = 'why_choose_us'").get();
   
+  let projects = [];
+  try { projects = db.prepare('SELECT * FROM projects ORDER BY created_at DESC LIMIT 6').all(); } catch(e){}
+
   res.render('public/home', {
-      projects,
+    projects,
     title: 'BRANDDIGIX - We Design Your Digital Identity',
     currentPage: 'home',
     services,
