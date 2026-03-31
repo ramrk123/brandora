@@ -9,6 +9,7 @@ router.get('/', (req, res) => {
   const whyChoose = db.prepare("SELECT * FROM content WHERE section_key = 'why_choose_us'").get();
   
   res.render('public/home', {
+      projects,
     title: 'BRANDDIGIX - We Design Your Digital Identity',
     currentPage: 'home',
     services,

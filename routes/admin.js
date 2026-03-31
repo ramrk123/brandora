@@ -2,6 +2,17 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { db } = require('../database/init');
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = require('path').join(__dirname, '../public/uploads/projects');
+    if (!require('fs').existsSync(dir)) require('fs').mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
+
 const { authenticateAdmin, generateToken } = require('../middleware/auth');
 
 // Admin login page
@@ -271,6 +282,26 @@ router.put('/messages/:id/read', (req, res) => {
 // Delete message
 router.delete('/messages/:id', (req, res) => {
   db.prepare('DELETE FROM contacts WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
+});
+
+// Projects Management
+router.get('/projects', (req, res) => {
+  const projects = db.prepare('SELECT * FROM projects ORDER BY created_at DESC').all();
+  const services = db.prepare('SELECT name FROM services ORDER BY sort_order').all();
+  res.render('admin/projects', { title: 'Projects - Admin', currentPage: 'projects', admin: req.admin, projects, services });
+});
+
+router.post('/projects', upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).send('Image required');
+  db.prepare('INSERT INTO projects (title, service_name, image_url) VALUES (?, ?, ?)').run(
+    req.body.title, req.body.service_name, '/uploads/projects/' + req.file.filename
+  );
+  res.redirect('/admin/projects');
+});
+
+router.delete('/projects/:id', (req, res) => {
+  db.prepare('DELETE FROM projects WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });
 
