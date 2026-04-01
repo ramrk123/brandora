@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const { Admin, Service, Content } = require('./models');
 
 // Configure MongoDB URI (local fallback for development)
-const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/creative_agency';
+const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/branddigix';
 
 // --- init logic ---
 
