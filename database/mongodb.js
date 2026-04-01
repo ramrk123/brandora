@@ -10,7 +10,7 @@ const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/creative_
 const initDB = async () => {
   try {
     console.log('⏳ Connecting to MongoDB at:', mongoURI);
-    await mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(mongoURI);
     console.log('✅ MongoDB connected successfully');
 
     // 1. Seed Default Admin

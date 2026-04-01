@@ -57,7 +57,7 @@
 services.map((service, i) => `
       <div class="service-card reveal-up" style="--delay: ${i * 0.1}s" id="serviceCard${service.id}">
         <div class="service-card-icon">
-          <i data-lucide="${service.icon || 'palette'}"></i>
+          <i data-lucide="${service.icon || 'palette'}" loading="lazy"></i>
         </div>
         <h3 class="service-card-title">${service.name}</h3>
         <p class="service-card-desc">${service.description.substring(0, 120)}...</p>
@@ -87,7 +87,7 @@ services.map((service, i) => `
             ` + projects.map(p => `
               <div class="portfolio-item">
                 <div class="portfolio-img">
-                  <img src="${p.image_url}" alt="${p.title}">
+                  <img src="${p.image_url}" alt="${p.title}" loading="lazy" width="400" height="300">
                   <div class="portfolio-overlay">
                     <span class="portfolio-category">${p.service_name}</span>
                     <h3 class="portfolio-title">${p.title}</h3>
