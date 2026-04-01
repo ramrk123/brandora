@@ -94,13 +94,13 @@ db.exec(`
 
 // Seed default admin
 function seedAdmin() {
-  const adminEmail = process.env.ADMIN_EMAIL || 'ramcreationof@gmail.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'branddigix@gmail.com';
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
   
   const existing = db.prepare('SELECT id FROM admins WHERE email = ?').get(adminEmail);
   if (!existing) {
     const hash = bcrypt.hashSync(adminPassword, 12);
-    db.prepare('INSERT INTO admins (email, password, name) VALUES (?, ?, ?)').run(adminEmail, hash, 'BRANDORA');
+    db.prepare('INSERT INTO admins (email, password, name) VALUES (?, ?, ?)').run(adminEmail, hash, 'BRANDDIGIX');
     console.log('✅ Default admin created:', adminEmail);
   }
 }
@@ -177,7 +177,7 @@ function seedContent() {
       },
       {
         section_key: 'about_intro',
-        title: 'About BRANDORA',
+        title: 'About BRANDDIGIX',
         subtitle: 'Crafting Digital Excellence Since Day One',
         body: 'We are a passionate creative agency dedicated to transforming your digital presence. With a focus on innovation, quality, and customer satisfaction, we deliver design solutions that make your brand stand out in the digital landscape.'
       },
@@ -197,13 +197,13 @@ function seedContent() {
         section_key: 'about_story',
         title: 'Our Story',
         subtitle: '',
-        body: 'Born from a passion for design and technology, BRANDORA started with a simple belief: every business, no matter its size, deserves a premium digital identity. What began as a one-person mission has grown into a dedicated creative studio serving clients across industries.'
+        body: 'Born from a passion for design and technology, BRANDDIGIX started with a simple belief: every business, no matter its size, deserves a premium digital identity. What began as a one-person mission has grown into a dedicated creative studio serving clients across industries.'
       },
       {
         section_key: 'company_overview',
-        title: 'BRANDORA',
+        title: 'BRANDDIGIX',
         subtitle: 'Your Creative Partner',
-        body: 'BRANDORA is a full-service creative agency specializing in logo design, UI/UX, website development, and theme design. We combine artistic creativity with technical expertise to deliver solutions that not only look stunning but also perform exceptionally.'
+        body: 'BRANDDIGIX is a full-service creative agency specializing in logo design, UI/UX, website development, and theme design. We combine artistic creativity with technical expertise to deliver solutions that not only look stunning but also perform exceptionally.'
       },
       {
         section_key: 'why_choose_us',
