@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const { db } = require('../database/init');
+const { Admin, Service, Booking, Contact, Project, Content } = require('../database/models');
 const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = require('path').join(__dirname, '../public/uploads/projects');
-    if (!require('fs').existsSync(dir)) require('fs').mkdirSync(dir, { recursive: true });
+    const dir = path.join(__dirname, '../public/uploads/projects');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
@@ -28,27 +31,30 @@ router.get('/login', (req, res) => {
 });
 
 // Admin login POST
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.render('admin/login', { title: 'Admin Login', error: 'Please fill in all fields' });
   }
 
-  const admin = db.prepare('SELECT * FROM admins WHERE email = ?').get(email);
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin || !bcrypt.compareSync(password, admin.password)) {
+      return res.render('admin/login', { title: 'Admin Login', error: 'Invalid email or password' });
+    }
 
-  if (!admin || !bcrypt.compareSync(password, admin.password)) {
-    return res.render('admin/login', { title: 'Admin Login', error: 'Invalid email or password' });
+    const token = generateToken(admin);
+    res.cookie('admin_token', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'strict'
+    });
+
+    res.redirect('/admin/dashboard');
+  } catch (err) {
+    res.render('admin/login', { title: 'Admin Login', error: 'Server error' });
   }
-
-  const token = generateToken(admin);
-  res.cookie('admin_token', token, {
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'strict'
-  });
-
-  res.redirect('/admin/dashboard');
 });
 
 // Logout
@@ -63,253 +69,288 @@ router.use(authenticateAdmin);
 // Dashboard overview
 router.get('/', (req, res) => res.redirect('/admin/dashboard'));
 
-router.get('/dashboard', (req, res) => {
-  const totalBookings = db.prepare('SELECT COUNT(*) as c FROM bookings').get().c;
-  const pendingBookings = db.prepare("SELECT COUNT(*) as c FROM bookings WHERE status = 'Pending'").get().c;
-  const inProgressBookings = db.prepare("SELECT COUNT(*) as c FROM bookings WHERE status = 'In Progress'").get().c;
-  const completedBookings = db.prepare("SELECT COUNT(*) as c FROM bookings WHERE status = 'Completed'").get().c;
-  const totalContacts = db.prepare('SELECT COUNT(*) as c FROM contacts').get().c;
-  const unreadContacts = db.prepare('SELECT COUNT(*) as c FROM contacts WHERE is_read = 0').get().c;
-  const totalServices = db.prepare('SELECT COUNT(*) as c FROM services WHERE is_active = 1').get().c;
-  const servicesList = db.prepare('SELECT name FROM services WHERE is_active = 1 ORDER BY sort_order').all();
+router.get('/dashboard', async (req, res) => {
+  try {
+    const totalBookings = await Booking.countDocuments();
+    const pendingBookings = await Booking.countDocuments({ status: 'Pending' });
+    const inProgressBookings = await Booking.countDocuments({ status: 'In Progress' });
+    const completedBookings = await Booking.countDocuments({ status: 'Completed' });
+    const totalContacts = await Contact.countDocuments();
+    const unreadContacts = await Contact.countDocuments({ is_read: false });
+    const totalServices = await Service.countDocuments({ is_active: true });
+    
+    const servicesList = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    const recentBookings = await Booking.find().sort({ created_at: -1 }).limit(5);
+    const recentContacts = await Contact.find().sort({ created_at: -1 }).limit(5);
+    const recentProjects = await Project.find().sort({ created_at: -1 }).limit(5);
 
-  const recentBookings = db.prepare(`
-    SELECT * FROM bookings ORDER BY created_at DESC LIMIT 5
-  `).all();
+    // Simulated serviceStats (aggregation needed for real stats)
+    const stats = await Booking.aggregate([
+      { $group: { _id: "$service_name", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+    const serviceStats = stats.map(s => ({ service_name: s._id, count: s.count }));
 
-  const recentContacts = db.prepare(`
-    SELECT * FROM contacts ORDER BY created_at DESC LIMIT 5
-  `).all();
-
-  // Service popularity
-  const serviceStats = db.prepare(`
-    SELECT service_name, COUNT(*) as count 
-    FROM bookings 
-    GROUP BY service_name 
-    ORDER BY count DESC
-  `).all();
-
-  const recentProjects = db.prepare(`
-    SELECT * FROM projects ORDER BY created_at DESC LIMIT 5
-  `).all();
-
-  res.render('admin/dashboard', {
-    title: 'Dashboard - Admin',
-    currentPage: 'dashboard',
-    admin: req.admin,
-    stats: { totalBookings, pendingBookings, inProgressBookings, completedBookings, totalContacts, unreadContacts, totalServices },
-    recentBookings,
-    recentContacts,
-    serviceStats,
-    recentProjects,
-    servicesList
-  });
+    res.render('admin/dashboard', {
+      title: 'Dashboard - Admin',
+      currentPage: 'dashboard',
+      admin: req.admin,
+      stats: { totalBookings, pendingBookings, inProgressBookings, completedBookings, totalContacts, unreadContacts, totalServices },
+      recentBookings,
+      recentContacts,
+      serviceStats,
+      recentProjects,
+      servicesList
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Dashboard Loading Error');
+  }
 });
 
-// Customer management
-router.get('/customers', (req, res) => {
-  const search = req.query.search || '';
-  const serviceFilter = req.query.service || '';
-  
-  let query = `SELECT DISTINCT name, email, district, contact_number, 
-    GROUP_CONCAT(DISTINCT service_name) as services,
-    COUNT(*) as booking_count,
-    MAX(created_at) as last_booking
-    FROM bookings WHERE 1=1`;
-  const params = [];
+// Customer management (Unique Emails in Bookings)
+router.get('/customers', async (req, res) => {
+  try {
+    const search = req.query.search || '';
+    const serviceFilter = req.query.service || '';
 
-  if (search) {
-    query += ` AND (name LIKE ? OR email LIKE ? OR district LIKE ? OR contact_number LIKE ?)`;
-    params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
+    // MongoDB Aggregation for customers
+    let matchStage = {};
+    if (search) {
+      matchStage.$or = [
+        { name: new RegExp(search, 'i') },
+        { email: new RegExp(search, 'i') },
+        { district: new RegExp(search, 'i') }
+      ];
+    }
+    if (serviceFilter) {
+      matchStage.service_name = serviceFilter;
+    }
+
+    const customers = await Booking.aggregate([
+      { $match: matchStage },
+      { $group: {
+          _id: "$email",
+          name: { $first: "$name" },
+          email: { $first: "$email" },
+          district: { $first: "$district" },
+          contact_number: { $first: "$contact_number" },
+          services: { $addToSet: "$service_name" },
+          booking_count: { $sum: 1 },
+          last_booking: { $max: "$created_at" }
+      }},
+      { $sort: { last_booking: -1 } }
+    ]);
+
+    const distinctServices = await Booking.distinct('service_name');
+
+    res.render('admin/customers', {
+      title: 'Customers - Admin',
+      currentPage: 'customers',
+      admin: req.admin,
+      customers,
+      services: distinctServices,
+      search,
+      serviceFilter
+    });
+  } catch (err) {
+    res.status(500).send('Error');
   }
-
-  if (serviceFilter) {
-    query += ` AND service_name = ?`;
-    params.push(serviceFilter);
-  }
-
-  query += ` GROUP BY email ORDER BY last_booking DESC`;
-
-  const customers = db.prepare(query).all(...params);
-  const services = db.prepare('SELECT DISTINCT service_name FROM bookings').all();
-
-  res.render('admin/customers', {
-    title: 'Customers - Admin',
-    currentPage: 'customers',
-    admin: req.admin,
-    customers,
-    services: services.map(s => s.service_name),
-    search,
-    serviceFilter
-  });
 });
 
 // Booking management
-router.get('/bookings', (req, res) => {
-  const status = req.query.status || '';
-  const search = req.query.search || '';
-  
-  let query = 'SELECT * FROM bookings WHERE 1=1';
-  const params = [];
+router.get('/bookings', async (req, res) => {
+  try {
+    const status = req.query.status || '';
+    const search = req.query.search || '';
+    
+    let query = {};
+    if (status) query.status = status;
+    if (search) {
+      query.$or = [
+        { name: new RegExp(search, 'i') },
+        { email: new RegExp(search, 'i') },
+        { service_name: new RegExp(search, 'i') }
+      ];
+    }
 
-  if (status) {
-    query += ' AND status = ?';
-    params.push(status);
+    const bookings = await Booking.find(query).sort({ created_at: -1 });
+
+    res.render('admin/bookings', {
+      title: 'Bookings - Admin',
+      currentPage: 'bookings',
+      admin: req.admin,
+      bookings,
+      statusFilter: status,
+      search
+    });
+  } catch (err) {
+    res.status(500).send('Error');
   }
-
-  if (search) {
-    query += ' AND (name LIKE ? OR email LIKE ? OR service_name LIKE ?)';
-    params.push(`%${search}%`, `%${search}%`, `%${search}%`);
-  }
-
-  query += ' ORDER BY created_at DESC';
-
-  const bookings = db.prepare(query).all(...params);
-
-  res.render('admin/bookings', {
-    title: 'Bookings - Admin',
-    currentPage: 'bookings',
-    admin: req.admin,
-    bookings,
-    statusFilter: status,
-    search
-  });
 });
 
 // Update booking status
-router.post('/bookings/:id/status', (req, res) => {
-  const { status } = req.body;
-  const valid = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
-  
-  if (!valid.includes(status)) {
-    return res.status(400).json({ error: 'Invalid status' });
+router.post('/bookings/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    await Booking.findByIdAndUpdate(req.params.id, { status, updated_at: Date.now() });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Update Failed' });
   }
-
-  db.prepare('UPDATE bookings SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(status, req.params.id);
-  res.json({ success: true });
 });
 
 // Delete booking
-router.delete('/bookings/:id', (req, res) => {
-  db.prepare('DELETE FROM bookings WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+router.delete('/bookings/:id', async (req, res) => {
+  try {
+    await Booking.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Delete Failed' });
+  }
 });
 
 // Services management
-router.get('/services', (req, res) => {
-  const services = db.prepare('SELECT * FROM services ORDER BY sort_order').all();
-
-  res.render('admin/services', {
-    title: 'Services - Admin',
-    currentPage: 'services',
-    admin: req.admin,
-    services
-  });
+router.get('/services', async (req, res) => {
+  try {
+    const services = await Service.find().sort({ sort_order: 1 });
+    res.render('admin/services', {
+      title: 'Services - Admin',
+      currentPage: 'services',
+      admin: req.admin,
+      services
+    });
+  } catch (err) {
+    res.status(500).send('Error');
+  }
 });
 
 // Add service
-router.post('/services', (req, res) => {
-  const { name, description, benefits, icon, price_display } = req.body;
+router.post('/services', async (req, res) => {
+  try {
+    const { name, description, benefits, icon, price_display } = req.body;
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const lastService = await Service.findOne().sort({ sort_order: -1 });
+    const sort_order = lastService ? lastService.sort_order + 1 : 1;
 
-  if (!name || !description) {
-    return res.status(400).json({ error: 'Name and description are required' });
+    await Service.create({ name, slug, description, benefits: benefits || '', icon: icon || 'palette', price_display: price_display || 'Contact for Quote', sort_order });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Create Failed' });
   }
-
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  const maxOrder = db.prepare('SELECT MAX(sort_order) as m FROM services').get().m || 0;
-
-  db.prepare(`
-    INSERT INTO services (name, slug, description, benefits, icon, price_display, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(name, slug, description, benefits || '', icon || 'palette', price_display || 'Contact for Quote', maxOrder + 1);
-
-  res.json({ success: true });
 });
 
 // Update service
-router.put('/services/:id', (req, res) => {
-  const { name, description, benefits, icon, price_display, is_active } = req.body;
-
-  db.prepare(`
-    UPDATE services SET name = ?, description = ?, benefits = ?, icon = ?, price_display = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(name, description, benefits || '', icon || 'palette', price_display || 'Contact for Quote', is_active !== undefined ? is_active : 1, req.params.id);
-
-  res.json({ success: true });
+router.put('/services/:id', async (req, res) => {
+  try {
+    const { name, description, benefits, icon, price_display, is_active } = req.body;
+    await Service.findByIdAndUpdate(req.params.id, { name, description, benefits, icon, price_display, is_active, updated_at: Date.now() });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Update Failed' });
+  }
 });
 
 // Delete service
-router.delete('/services/:id', (req, res) => {
-  db.prepare('DELETE FROM services WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
-});
-
-// Content management
-router.get('/content', (req, res) => {
-  const content = db.prepare('SELECT * FROM content ORDER BY id').all();
-
-  res.render('admin/content', {
-    title: 'Content - Admin',
-    currentPage: 'content',
-    admin: req.admin,
-    content
-  });
-});
-
-// Update content
-router.put('/content/:key', (req, res) => {
-  const { title, subtitle, body } = req.body;
-
-  db.prepare(`
-    UPDATE content SET title = ?, subtitle = ?, body = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE section_key = ?
-  `).run(title || '', subtitle || '', body || '', req.params.key);
-
-  res.json({ success: true });
-});
-
-// Messages / Contact submissions
-router.get('/messages', (req, res) => {
-  const messages = db.prepare('SELECT * FROM contacts ORDER BY created_at DESC').all();
-
-  res.render('admin/messages', {
-    title: 'Messages - Admin',
-    currentPage: 'messages',
-    admin: req.admin,
-    messages
-  });
-});
-
-// Mark message as read
-router.put('/messages/:id/read', (req, res) => {
-  db.prepare('UPDATE contacts SET is_read = 1 WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
-});
-
-// Delete message
-router.delete('/messages/:id', (req, res) => {
-  db.prepare('DELETE FROM contacts WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+router.delete('/services/:id', async (req, res) => {
+  try {
+    await Service.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Delete Failed' });
+  }
 });
 
 // Projects Management
-router.get('/projects', (req, res) => {
-  const projects = db.prepare('SELECT * FROM projects ORDER BY created_at DESC').all();
-  const services = db.prepare('SELECT name FROM services ORDER BY sort_order').all();
-  res.render('admin/projects', { title: 'Projects - Admin', currentPage: 'projects', admin: req.admin, projects, services });
+router.get('/projects', async (req, res) => {
+  try {
+    const projects = await Project.find().sort({ created_at: -1 });
+    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    res.render('admin/projects', { title: 'Projects - Admin', currentPage: 'projects', admin: req.admin, projects, services });
+  } catch (err) {
+    res.status(500).send('Error');
+  }
 });
 
-router.post('/projects', upload.single('image'), (req, res) => {
-  if (!req.file) return res.status(400).send('Image required');
-  db.prepare('INSERT INTO projects (title, service_name, image_url) VALUES (?, ?, ?)').run(
-    req.body.title, req.body.service_name, '/uploads/projects/' + req.file.filename
-  );
-  res.redirect('/admin/projects');
+router.post('/projects', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).send('Image required');
+    await Project.create({
+      title: req.body.title,
+      service_name: req.body.service_name,
+      image_url: '/uploads/projects/' + req.file.filename
+    });
+    res.redirect('/admin/projects');
+  } catch (err) {
+    res.status(500).send('Upload Failed');
+  }
 });
 
-router.delete('/projects/:id', (req, res) => {
-  db.prepare('DELETE FROM projects WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+router.delete('/projects/:id', async (req, res) => {
+  try {
+    await Project.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Delete Failed' });
+  }
+});
+
+// Content management
+router.get('/content', async (req, res) => {
+  try {
+    const content = await Content.find().sort({ section_key: 1 });
+    res.render('admin/content', {
+      title: 'Content - Admin',
+      currentPage: 'content',
+      admin: req.admin,
+      content
+    });
+  } catch (err) {
+    res.status(500).send('Error');
+  }
+});
+
+router.put('/content/:key', async (req, res) => {
+  try {
+    const { title, subtitle, body } = req.body;
+    await Content.findOneAndUpdate({ section_key: req.params.key }, { title, subtitle, body, updated_at: Date.now() });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Update Failed' });
+  }
+});
+
+// Messages
+router.get('/messages', async (req, res) => {
+  try {
+    const messages = await Contact.find().sort({ created_at: -1 });
+    res.render('admin/messages', {
+      title: 'Messages - Admin',
+      currentPage: 'messages',
+      admin: req.admin,
+      messages
+    });
+  } catch (err) {
+    res.status(500).send('Error');
+  }
+});
+
+router.put('/messages/:id/read', async (req, res) => {
+  try {
+    await Contact.findByIdAndUpdate(req.params.id, { is_read: true });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Update Failed' });
+  }
+});
+
+router.delete('/messages/:id', async (req, res) => {
+  try {
+    await Contact.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Delete Failed' });
+  }
 });
 
 module.exports = router;

@@ -2,8 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const { initialize } = require('./database/init');
-
+const initDB = require('./database/mongodb');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,8 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Initialize database
-initialize();
+// Initialize MongoDB
+initDB();
 
 // Routes
 app.use('/', require('./routes/public'));

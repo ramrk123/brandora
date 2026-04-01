@@ -77,7 +77,7 @@
               </thead>
               <tbody>
                 <% services.forEach(s => { %>
-                  <tr id="service-row-<%= s.id %>">
+                  <tr id="service-row-<%= s._id %>">
                     <td><%= s.sort_order %></td>
                     <td><i data-lucide="<%= s.icon %>"></i></td>
                     <td><strong><%= s.name %></strong></td>
@@ -89,7 +89,7 @@
                         <button class="action-btn edit" onclick='editService(<%= JSON.stringify(s) %>)' title="Edit">
                           <i data-lucide="edit"></i>
                         </button>
-                        <button class="action-btn delete" onclick="deleteService(<%= s.id %>)" title="Delete">
+                        <button class="action-btn delete" onclick="deleteService('<%= s._id %>')" title="Delete">
                           <i data-lucide="trash-2"></i>
                         </button>
                       </div>

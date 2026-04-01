@@ -1,64 +1,76 @@
 const express = require('express');
 const router = express.Router();
-const { db } = require('../database/init');
+const { Service, Content, Project } = require('../database/models');
 
 // Home page
-router.get('/', (req, res) => {
-  const services = db.prepare('SELECT * FROM services WHERE is_active = 1 ORDER BY sort_order').all();
-  const heroContent = db.prepare("SELECT * FROM content WHERE section_key = 'hero_heading'").get();
-  const whyChoose = db.prepare("SELECT * FROM content WHERE section_key = 'why_choose_us'").get();
-  
-  let projects = [];
-  try { projects = db.prepare('SELECT * FROM projects ORDER BY created_at DESC LIMIT 6').all(); } catch(e){}
+router.get('/', async (req, res) => {
+  try {
+    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    const heroContent = await Content.findOne({ section_key: 'hero_heading' });
+    const whyChoose = await Content.findOne({ section_key: 'why_choose_us' });
+    const projects = await Project.find().sort({ created_at: -1 }).limit(6);
 
-  res.render('public/home', {
-    projects,
-    title: 'BRANDDIGIX - We Design Your Digital Identity',
-    currentPage: 'home',
-    services,
-    heroContent,
-    whyChoose
-  });
+    res.render('public/home', {
+      projects,
+      title: 'BRANDDIGIX - We Design Your Digital Identity',
+      currentPage: 'home',
+      services,
+      heroContent,
+      whyChoose
+    });
+  } catch (err) {
+    res.status(500).send('Error loading homepage');
+  }
 });
 
 // About page
-router.get('/about', (req, res) => {
-  const intro = db.prepare("SELECT * FROM content WHERE section_key = 'about_intro'").get();
-  const mission = db.prepare("SELECT * FROM content WHERE section_key = 'about_mission'").get();
-  const vision = db.prepare("SELECT * FROM content WHERE section_key = 'about_vision'").get();
-  const story = db.prepare("SELECT * FROM content WHERE section_key = 'about_story'").get();
-  const whyChoose = db.prepare("SELECT * FROM content WHERE section_key = 'why_choose_us'").get();
-  const company = db.prepare("SELECT * FROM content WHERE section_key = 'company_overview'").get();
+router.get('/about', async (req, res) => {
+  try {
+    const intro = await Content.findOne({ section_key: 'about_intro' });
+    const mission = await Content.findOne({ section_key: 'about_mission' });
+    const vision = await Content.findOne({ section_key: 'about_vision' });
+    const story = await Content.findOne({ section_key: 'about_story' });
+    const whyChoose = await Content.findOne({ section_key: 'why_choose_us' });
+    const company = await Content.findOne({ section_key: 'company_overview' });
 
-  res.render('public/about', {
-    title: 'About Us - BRANDDIGIX',
-    currentPage: 'about',
-    intro, mission, vision, story, whyChoose, company
-  });
+    res.render('public/about', {
+      title: 'About Us - BRANDDIGIX',
+      currentPage: 'about',
+      intro, mission, vision, story, whyChoose, company
+    });
+  } catch (err) {
+    res.status(500).send('Error loading about page');
+  }
 });
 
 // Services page
-router.get('/services', (req, res) => {
-  const services = db.prepare('SELECT * FROM services WHERE is_active = 1 ORDER BY sort_order').all();
-  
-  res.render('public/services', {
-    title: 'Our Services - BRANDDIGIX',
-    currentPage: 'services',
-    services
-  });
+router.get('/services', async (req, res) => {
+  try {
+    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    res.render('public/services', {
+      title: 'Our Services - BRANDDIGIX',
+      currentPage: 'services',
+      services
+    });
+  } catch (err) {
+    res.status(500).send('Error loading services page');
+  }
 });
 
 // Booking page
-router.get('/booking', (req, res) => {
-  const services = db.prepare('SELECT id, name FROM services WHERE is_active = 1 ORDER BY sort_order').all();
-  const preselected = req.query.service || '';
-  
-  res.render('public/booking', {
-    title: 'Book a Service - BRANDDIGIX',
-    currentPage: 'booking',
-    services,
-    preselected
-  });
+router.get('/booking', async (req, res) => {
+  try {
+    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    const preselected = req.query.service || '';
+    res.render('public/booking', {
+      title: 'Book a Service - BRANDDIGIX',
+      currentPage: 'booking',
+      services,
+      preselected
+    });
+  } catch (err) {
+    res.status(500).send('Error loading booking page');
+  }
 });
 
 // Contact page

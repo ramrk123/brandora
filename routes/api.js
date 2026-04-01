@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { db } = require('../database/init');
+const { Service, Booking, Contact } = require('../database/models');
 
 // Submit booking
-router.post('/booking', (req, res) => {
+router.post('/booking', async (req, res) => {
   try {
     const { name, district, contact_number, email, service_id, message } = req.body;
 
@@ -12,35 +12,26 @@ router.post('/booking', (req, res) => {
       return res.status(400).json({ error: 'All required fields must be filled' });
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Please enter a valid email address' });
-    }
-
-    // Phone validation
-    const phoneRegex = /^[+]?[\d\s-]{10,15}$/;
-    if (!phoneRegex.test(contact_number)) {
-      return res.status(400).json({ error: 'Please enter a valid contact number' });
-    }
-
-    // Get service name
-    const service = db.prepare('SELECT name FROM services WHERE id = ?').get(service_id);
+    // Get service info
+    const service = await Service.findById(service_id);
     if (!service) {
       return res.status(400).json({ error: 'Invalid service selected' });
     }
 
-    const stmt = db.prepare(`
-      INSERT INTO bookings (name, district, contact_number, email, service_id, service_name, message)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    const result = stmt.run(name, district, contact_number, email, service_id, service.name, message || '');
+    const newBooking = await Booking.create({
+      name,
+      district,
+      contact_number,
+      email,
+      service_id,
+      service_name: service.name,
+      message: message || ''
+    });
 
     res.json({
       success: true,
       message: 'Your booking has been submitted successfully! We will contact you soon.',
-      booking_id: result.lastInsertRowid
+      booking_id: newBooking._id
     });
   } catch (err) {
     console.error('Booking error:', err);
@@ -49,7 +40,7 @@ router.post('/booking', (req, res) => {
 });
 
 // Submit contact form
-router.post('/contact', (req, res) => {
+router.post('/contact', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
@@ -57,17 +48,12 @@ router.post('/contact', (req, res) => {
       return res.status(400).json({ error: 'Name, email and message are required' });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Please enter a valid email address' });
-    }
-
-    const stmt = db.prepare(`
-      INSERT INTO contacts (name, email, subject, message)
-      VALUES (?, ?, ?, ?)
-    `);
-
-    stmt.run(name, email, subject || '', message);
+    await Contact.create({
+      name,
+      email,
+      subject: subject || '',
+      message
+    });
 
     res.json({
       success: true,
@@ -80,9 +66,13 @@ router.post('/contact', (req, res) => {
 });
 
 // Get services (JSON)
-router.get('/services', (req, res) => {
-  const services = db.prepare('SELECT * FROM services WHERE is_active = 1 ORDER BY sort_order').all();
-  res.json(services);
+router.get('/services', async (req, res) => {
+  try {
+    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    res.json(services);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch services' });
+  }
 });
 
 module.exports = router;

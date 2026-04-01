@@ -109,7 +109,7 @@ function openServiceModal(service = null) {
 
   if (service) {
     title.textContent = 'Edit Service';
-    idField.value = service.id;
+    idField.value = service._id || service.id;
     nameField.value = service.name;
     iconField.value = service.icon || '';
     priceField.value = service.price_display || '';

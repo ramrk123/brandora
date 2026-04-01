@@ -77,13 +77,13 @@
               </thead>
               <tbody>
                 <% projects.forEach(p => { %>
-                  <tr id="project-row-<%= p.id %>">
+                  <tr id="project-row-<%= p._id %>">
                     <td><img src="<%= p.image_url %>" style="width: 70px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1)"></td>
                     <td><strong><%= p.title %></strong></td>
                     <td><span class="badge"><%= p.service_name %></span></td>
                     <td class="text-muted"><%= new Date(p.created_at).toLocaleDateString() %></td>
                     <td>
-                      <button class="action-btn delete" onclick="deleteProject(<%= p.id %>)" title="Delete">
+                      <button class="action-btn delete" onclick="deleteProject('<%= p._id %>')" title="Delete">
                         <i data-lucide="trash-2"></i>
                       </button>
                     </td>

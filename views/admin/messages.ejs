@@ -61,7 +61,7 @@
           <% } else { %>
             <div class="messages-list">
               <% messages.forEach(m => { %>
-                <div class="message-item <%= m.is_read ? '' : 'unread' %>" id="msg-<%= m.id %>">
+                <div class="message-item <%= m.is_read ? '' : 'unread' %>" id="msg-<%= m._id %>">
                   <div class="message-header">
                     <div class="message-author">
                       <div class="message-avatar"><%= m.name.charAt(0).toUpperCase() %></div>
@@ -80,9 +80,9 @@
                   <div class="message-actions">
                     <a href="mailto:<%= m.email %>" class="btn btn-outline btn-sm"><i data-lucide="reply"></i> Reply via Email</a>
                     <% if (!m.is_read) { %>
-                      <button class="btn btn-outline btn-sm" onclick="markRead(<%= m.id %>)"><i data-lucide="check"></i> Mark Read</button>
+                      <button class="btn btn-outline btn-sm" onclick="markRead('<%= m._id %>')"><i data-lucide="check"></i> Mark Read</button>
                     <% } %>
-                    <button class="btn btn-outline btn-sm delete-btn" onclick="deleteMessage(<%= m.id %>)"><i data-lucide="trash-2"></i> Delete</button>
+                    <button class="btn btn-outline btn-sm delete-btn" onclick="deleteMessage('<%= m._id %>')"><i data-lucide="trash-2"></i> Delete</button>
                   </div>
                 </div>
               <% }) %>

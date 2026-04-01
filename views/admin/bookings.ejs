@@ -95,8 +95,8 @@
                   </thead>
                   <tbody>
                     <% bookings.forEach(b => { %>
-                      <tr id="booking-row-<%= b.id %>">
-                        <td>#<%= b.id %></td>
+                      <tr id="booking-row-<%= b._id %>">
+                        <td>#<%= b._id.toString().substring(0, 8) %>...</td>
                         <td><strong><%= b.name %></strong></td>
                         <td><a href="mailto:<%= b.email %>"><%= b.email %></a></td>
                         <td><a href="tel:<%= b.contact_number %>"><%= b.contact_number %></a></td>
@@ -104,8 +104,8 @@
                         <td><%= b.service_name %></td>
                         <td>
                           <select class="status-select status-<%= b.status.toLowerCase().replace(' ', '-') %>" 
-                                  onchange="updateBookingStatus(<%= b.id %>, this.value, this)"
-                                  data-id="<%= b.id %>">
+                                  onchange="updateBookingStatus('<%= b._id %>', this.value, this)"
+                                  data-id="<%= b._id %>">
                             <option value="Pending" <%= b.status === 'Pending' ? 'selected' : '' %>>Pending</option>
                             <option value="In Progress" <%= b.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
                             <option value="Completed" <%= b.status === 'Completed' ? 'selected' : '' %>>Completed</option>
@@ -115,7 +115,7 @@
                         <td class="text-muted"><%= new Date(b.created_at).toLocaleDateString() %></td>
                         <td>
                           <div class="action-btns">
-                            <button class="action-btn delete" onclick="deleteBooking(<%= b.id %>)" title="Delete">
+                            <button class="action-btn delete" onclick="deleteBooking('<%= b._id %>')" title="Delete">
                               <i data-lucide="trash-2"></i>
                             </button>
                           </div>
