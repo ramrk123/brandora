@@ -3,7 +3,12 @@ const bcrypt = require('bcryptjs');
 
 // PostgreSQL Connection — uses DATABASE_URL from environment
 if (!process.env.DATABASE_URL) {
-  console.error('❌ CRITICAL: DATABASE_URL is not set in environment!');
+  const errorMsg = '❌ CRITICAL: DATABASE_URL is missing! Please add it to your Render Environment variables.';
+  console.error(errorMsg);
+  // In production, we should know if the DB is missing
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(errorMsg);
+  }
 }
 
 const pool = new Pool({
