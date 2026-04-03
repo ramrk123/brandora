@@ -19,7 +19,7 @@ function authenticateAdmin(req, res, next) {
 
 function generateToken(admin) {
   return jwt.sign(
-    { id: admin._id, email: admin.email, name: admin.name },
+    { id: admin.id, email: admin.email, name: admin.name },
     process.env.JWT_SECRET || 'branddigix_secret_key_2024',
     { expiresIn: '24h' }
   );

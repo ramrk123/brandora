@@ -1,14 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { Service, Content, Project } = require('../database/models');
+const { db } = require('../database/init');
 
 // Home page
 router.get('/', async (req, res) => {
   try {
-    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
-    const heroContent = await Content.findOne({ section_key: 'hero_heading' });
-    const whyChoose = await Content.findOne({ section_key: 'why_choose_us' });
-    const projects = await Project.find().sort({ created_at: -1 }).limit(6);
+    const services = await db.getAll('SELECT * FROM services WHERE is_active = 1 ORDER BY sort_order');
+    const heroContent = await db.getOne("SELECT * FROM content WHERE section_key = 'hero_heading'");
+    const whyChoose = await db.getOne("SELECT * FROM content WHERE section_key = 'why_choose_us'");
+
+    let projects = [];
+    try { projects = await db.getAll('SELECT * FROM projects ORDER BY created_at DESC LIMIT 6'); } catch(e){}
 
     res.render('public/home', {
       projects,
@@ -18,49 +20,52 @@ router.get('/', async (req, res) => {
       heroContent,
       whyChoose
     });
-  } catch (err) {
-    res.status(500).send('Error loading homepage');
+  } catch(err) {
+    console.error('Home error:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // About page
 router.get('/about', async (req, res) => {
   try {
-    const intro = await Content.findOne({ section_key: 'about_intro' });
-    const mission = await Content.findOne({ section_key: 'about_mission' });
-    const vision = await Content.findOne({ section_key: 'about_vision' });
-    const story = await Content.findOne({ section_key: 'about_story' });
-    const whyChoose = await Content.findOne({ section_key: 'why_choose_us' });
-    const company = await Content.findOne({ section_key: 'company_overview' });
+    const intro = await db.getOne("SELECT * FROM content WHERE section_key = 'about_intro'");
+    const mission = await db.getOne("SELECT * FROM content WHERE section_key = 'about_mission'");
+    const vision = await db.getOne("SELECT * FROM content WHERE section_key = 'about_vision'");
+    const story = await db.getOne("SELECT * FROM content WHERE section_key = 'about_story'");
+    const whyChoose = await db.getOne("SELECT * FROM content WHERE section_key = 'why_choose_us'");
+    const company = await db.getOne("SELECT * FROM content WHERE section_key = 'company_overview'");
 
     res.render('public/about', {
       title: 'About Us - BRANDDIGIX',
       currentPage: 'about',
       intro, mission, vision, story, whyChoose, company
     });
-  } catch (err) {
-    res.status(500).send('Error loading about page');
+  } catch(err) {
+    console.error('About error:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // Services page
 router.get('/services', async (req, res) => {
   try {
-    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    const services = await db.getAll('SELECT * FROM services WHERE is_active = 1 ORDER BY sort_order');
     res.render('public/services', {
       title: 'Our Services - BRANDDIGIX',
       currentPage: 'services',
       services
     });
-  } catch (err) {
-    res.status(500).send('Error loading services page');
+  } catch(err) {
+    console.error('Services error:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 // Booking page
 router.get('/booking', async (req, res) => {
   try {
-    const services = await Service.find({ is_active: true }).sort({ sort_order: 1 });
+    const services = await db.getAll('SELECT id, name FROM services WHERE is_active = 1 ORDER BY sort_order');
     const preselected = req.query.service || '';
     res.render('public/booking', {
       title: 'Book a Service - BRANDDIGIX',
@@ -68,8 +73,9 @@ router.get('/booking', async (req, res) => {
       services,
       preselected
     });
-  } catch (err) {
-    res.status(500).send('Error loading booking page');
+  } catch(err) {
+    console.error('Booking error:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
