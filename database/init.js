@@ -2,18 +2,23 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
 // PostgreSQL Connection — uses DATABASE_URL from environment
-if (!process.env.DATABASE_URL) {
+let dbUrl = process.env.DATABASE_URL;
+if (dbUrl) {
+  // Strip channel_binding if present as it can cause hangs on some proxies like Render
+  dbUrl = dbUrl.replace(/&?channel_binding=[^&]*/, '');
+} else {
   const errorMsg = '❌ CRITICAL: DATABASE_URL is missing! Please add it to your Render Environment variables.';
   console.error(errorMsg);
-  // In production, we should know if the DB is missing
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error(errorMsg);
-  }
+  if (process.env.NODE_ENV === 'production') throw new Error(errorMsg);
 }
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  connectionString: dbUrl,
+  ssl: { rejectUnauthorized: false },
+  // Fail fast instead of hanging forever
+  connectionTimeoutMillis: 5000, 
+  idleTimeoutMillis: 30000,
+  max: 20
 });
 
 // Helper: run a query (mimics old db.prepare pattern for easy migration)
