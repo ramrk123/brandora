@@ -2,9 +2,13 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
 // PostgreSQL Connection — uses DATABASE_URL from environment
+if (!process.env.DATABASE_URL) {
+  console.error('❌ CRITICAL: DATABASE_URL is not set in environment!');
+}
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes('localhost') ? false : { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false }
 });
 
 // Helper: run a query (mimics old db.prepare pattern for easy migration)

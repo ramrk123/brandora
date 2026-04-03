@@ -91,9 +91,19 @@ router.get('/contact', (req, res) => {
 router.get('/check-db', async (req, res) => {
   try {
     const result = await db.getOne('SELECT NOW() as now');
-    res.json({ success: true, time: result.now });
+    res.json({ 
+      success: true, 
+      time: result.now,
+      env_keys: Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('URL') || k.includes('PORT'))
+    });
   } catch (err) {
-    res.json({ success: false, error: err.message, stack: err.stack });
+    res.json({ 
+      success: false, 
+      error: err.message, 
+      code: err.code,
+      env_keys: Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('URL') || k.includes('PORT')),
+      stack: err.stack 
+    });
   }
 });
 
