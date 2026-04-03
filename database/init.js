@@ -1,21 +1,15 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
-// PostgreSQL Connection — uses DATABASE_URL from environment
-let dbUrl = process.env.DATABASE_URL;
-if (dbUrl) {
-  // Strip channel_binding if present as it can cause hangs on some proxies like Render
-  dbUrl = dbUrl.replace(/&?channel_binding=[^&]*/, '');
-} else {
-  const errorMsg = '❌ CRITICAL: DATABASE_URL is missing! Please add it to your Render Environment variables.';
-  console.error(errorMsg);
-  if (process.env.NODE_ENV === 'production') throw new Error(errorMsg);
-}
+// PostgreSQL Connection — uses DATABASE_URL from environment with hardcoded fallback for first run
+let dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_bcsQVZa5M9Ul@ep-curly-fog-amqq3w5p.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require';
+
+// Strip channel_binding if present as it can cause hangs on some proxies like Render
+dbUrl = dbUrl.replace(/&?channel_binding=[^&]*/, '');
 
 const pool = new Pool({
   connectionString: dbUrl,
   ssl: { rejectUnauthorized: false },
-  // Fail fast instead of hanging forever
   connectionTimeoutMillis: 5000, 
   idleTimeoutMillis: 30000,
   max: 20
