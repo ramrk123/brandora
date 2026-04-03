@@ -94,14 +94,14 @@ router.get('/check-db', async (req, res) => {
     res.json({ 
       success: true, 
       time: result.now,
-      env_keys: Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('URL') || k.includes('PORT'))
+      env_keys: Object.keys(process.env).sort()
     });
   } catch (err) {
     res.json({ 
       success: false, 
       error: err.message, 
       code: err.code,
-      env_keys: Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('URL') || k.includes('PORT')),
+      env_keys: Object.keys(process.env).sort(),
       stack: err.stack 
     });
   }
