@@ -2,15 +2,26 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { db } = require('../database/init');
+const { v2: cloudinary } = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = require('path').join(__dirname, '../public/uploads/projects');
-    if (!require('fs').existsSync(dir)) require('fs').mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+
+// Configure Cloudinary for permanent image storage
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'branddigix-projects',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    transformation: [{ width: 1000, height: 1000, crop: 'limit', quality: 'auto' }] 
+  }
+});
+
 const upload = multer({ storage });
 
 const { authenticateAdmin, generateToken } = require('../middleware/auth');
@@ -322,11 +333,17 @@ router.get('/projects', async (req, res) => {
 
 router.post('/projects', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).send('Image required');
-  await db.run(
-    'INSERT INTO projects (title, service_name, image_url) VALUES ($1, $2, $3)',
-    [req.body.title, req.body.service_name, '/uploads/projects/' + req.file.filename]
-  );
-  res.redirect('/admin/projects');
+  try {
+    // req.file.path is the cloud URL provided by cloudinary
+    await db.run(
+      'INSERT INTO projects (title, service_name, image_url) VALUES ($1, $2, $3)',
+      [req.body.title, req.body.service_name, req.file.path]
+    );
+    res.redirect('/admin/projects');
+  } catch (err) {
+    console.error('Upload Error:', err);
+    res.status(500).send('Error uploading project');
+  }
 });
 
 router.delete('/projects/:id', async (req, res) => {
