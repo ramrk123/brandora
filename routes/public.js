@@ -87,24 +87,4 @@ router.get('/contact', (req, res) => {
   });
 });
 
-// Debug route (Internal Use)
-router.get('/check-db', async (req, res) => {
-  try {
-    const result = await db.getOne('SELECT NOW() as now');
-    res.json({ 
-      success: true, 
-      time: result.now,
-      env_keys: Object.keys(process.env).sort()
-    });
-  } catch (err) {
-    res.json({ 
-      success: false, 
-      error: err.message, 
-      code: err.code,
-      env_keys: Object.keys(process.env).sort(),
-      stack: err.stack 
-    });
-  }
-});
-
 module.exports = router;
