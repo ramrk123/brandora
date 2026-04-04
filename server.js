@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const { initialize } = require('./database/init');
 
+const compression = require('compression');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -11,11 +12,19 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Performance: Minify & Compress all responses
+app.use(compression());
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Serves static files with 1-Year aggressive browser caching for speed
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1y',
+  etag: true
+}));
 
 // Initialize database then start server
 async function startServer() {
