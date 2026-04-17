@@ -14,7 +14,8 @@ router.get('/', async (req, res) => {
 
     res.render('public/home', {
       projects,
-      title: 'BRANDDIGIX - We Design Your Digital Identity',
+      title: 'BRANDDIGIX - Premium Logo Design & Website Development Agency',
+      metaDescription: 'BRANDDIGIX helps businesses build a powerful digital identity with expert logo design, UI/UX, and fast web development. Transform your brand today.',
       currentPage: 'home',
       services,
       heroContent,
@@ -37,7 +38,8 @@ router.get('/about', async (req, res) => {
     const company = await db.getOne("SELECT * FROM content WHERE section_key = 'company_overview'");
 
     res.render('public/about', {
-      title: 'About Us - BRANDDIGIX',
+      title: 'Our Story & Creative Mission - About BRANDDIGIX',
+      metaDescription: 'Learn about the experts behind BRANDDIGIX. Our mission is to deliver world-class design and technology solutions that help our clients grow.',
       currentPage: 'about',
       intro, mission, vision, story, whyChoose, company
     });
@@ -52,7 +54,8 @@ router.get('/services', async (req, res) => {
   try {
     const services = await db.getAll('SELECT * FROM services WHERE is_active = 1 ORDER BY sort_order');
     res.render('public/services', {
-      title: 'Our Services - BRANDDIGIX',
+      title: 'Logo Design, UI/UX & Web Development Services - BRANDDIGIX',
+      metaDescription: 'Explore our range of creative services from professional logo design to advanced web development. We help you stand out in the digital crowd.',
       currentPage: 'services',
       services
     });
@@ -68,7 +71,8 @@ router.get('/booking', async (req, res) => {
     const services = await db.getAll('SELECT id, name FROM services WHERE is_active = 1 ORDER BY sort_order');
     const preselected = req.query.service || '';
     res.render('public/booking', {
-      title: 'Book a Service - BRANDDIGIX',
+      title: 'Start Your Project - Book a Design Consultation | BRANDDIGIX',
+      metaDescription: 'Ready to elevate your brand? Book a consultation with BRANDDIGIX today and start your journey toward a stunning digital identity.',
       currentPage: 'booking',
       services,
       preselected
@@ -82,9 +86,33 @@ router.get('/booking', async (req, res) => {
 // Contact page
 router.get('/contact', (req, res) => {
   res.render('public/contact', {
-    title: 'Contact Us - BRANDDIGIX',
+    title: 'Contact Our Creative Team | BRANDDIGIX Support',
+    metaDescription: 'Have questions? Get in touch with BRANDDIGIX for logo design, web development, or general inquiries. We are here to help.',
     currentPage: 'contact'
   });
+});
+
+// robots.txt
+router.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.send(`User-agent: *
+Allow: /
+Disallow: /admin/
+Sitemap: https://branddigix-com.onrender.com/sitemap.xml`);
+});
+
+// sitemap.xml
+router.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml');
+  const now = new Date().toISOString();
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://branddigix-com.onrender.com/</loc><lastmod>${now}</lastmod><priority>1.0</priority></url>
+  <url><loc>https://branddigix-com.onrender.com/about</loc><lastmod>${now}</lastmod><priority>0.8</priority></url>
+  <url><loc>https://branddigix-com.onrender.com/services</loc><lastmod>${now}</lastmod><priority>0.8</priority></url>
+  <url><loc>https://branddigix-com.onrender.com/contact</loc><lastmod>${now}</lastmod><priority>0.7</priority></url>
+  <url><loc>https://branddigix-com.onrender.com/booking</loc><lastmod>${now}</lastmod><priority>0.6</priority></url>
+</urlset>`);
 });
 
 module.exports = router;

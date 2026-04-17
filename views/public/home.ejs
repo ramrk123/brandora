@@ -55,7 +55,7 @@
     <div class="services-grid">
 ` +
 services.map((service, i) => `
-      <div class="service-card reveal-up" style="--delay: ${i * 0.1}s" id="serviceCard${service.id}">
+      <div class="service-card reveal-up" style="--delay: ${(i % 4) * 0.15}s" id="serviceCard${service.id}">
         <div class="service-card-icon">
           <i data-lucide="${service.icon || 'palette'}"></i>
         </div>
@@ -84,8 +84,8 @@ services.map((service, i) => `
         </div>
         ` + (typeof projects !== 'undefined' && projects && projects.length > 0 ? `
           <div class="portfolio-grid">
-            ` + projects.map(p => `
-              <div class="portfolio-item">
+            ` + projects.map((p, i) => `
+              <div class="portfolio-item reveal-up" style="--delay: ${(i % 3) * 0.15}s">
                 <div class="portfolio-img">
                   <img src="${p.image_url}" alt="${p.title}">
                   <div class="portfolio-overlay">

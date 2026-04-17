@@ -16,7 +16,7 @@
   <div class="container">
 ` +
 services.map((service, i) => `
-    <div class="service-detail ${i % 2 !== 0 ? 'reverse' : ''} reveal-up" id="service-${service.slug}">
+    <div class="service-detail ${i % 2 !== 0 ? 'reverse' : ''} reveal-up" style="--delay: 0.2s" id="service-${service.slug}">
       <div class="service-detail-content">
         <div class="service-detail-icon">
           <i data-lucide="${service.icon || 'palette'}"></i>

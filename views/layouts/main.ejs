@@ -3,13 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BRANDDIGIX - Premium creative agency offering logo design, UI/UX, website development, and custom design services.">
-  <meta name="keywords" content="logo design, UI/UX design, website development, creative agency, brand identity">
-  <meta name="theme-color" content="#0F0F0F">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title><%= typeof title !== 'undefined' ? title : 'BRANDDIGIX' %></title>
+  
+  <!-- SEO & Primary Meta Tags -->
+  <title><%= typeof title !== 'undefined' ? title : 'BRANDDIGIX - Expert Logo Design & Creative Agency' %></title>
+  <meta name="title" content="<%= typeof title !== 'undefined' ? title : 'BRANDDIGIX - We Design Your Digital Identity' %>">
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'BRANDDIGIX is a premium creative agency specializing in logo design, UI/UX, website development, and custom branding services. We build digital identities that perform.' %>">
+  <meta name="keywords" content="logo design, website development, creative agency india, UI/UX design, brand identity, graphic design services">
+  <meta name="author" content="BRANDDIGIX">
+  <link rel="canonical" href="https://branddigix-com.onrender.com/">
+
+  <!-- Open Graph / Facebook (Social Media Sharing) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://branddigix-com.onrender.com/">
+  <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'BRANDDIGIX - Expert Logo Design & Creative Agency' %>">
+  <meta property="og:description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Elevate your brand with premium logo design and expert web development from BRANDDIGIX.' %>">
+  <meta property="og:image" content="https://branddigix-com.onrender.com/images/og-image.jpg">
+
+  <!-- Twitter Card -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://branddigix-com.onrender.com/">
+  <meta property="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'BRANDDIGIX - Expert Logo Design & Creative Agency' %>">
+  <meta property="twitter:description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Elevate your brand with premium logo design and expert web development.' %>">
+  <meta property="twitter:image" content="https://branddigix-com.onrender.com/images/og-image.jpg">
+
+  <!-- Mobile & Theme -->
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
